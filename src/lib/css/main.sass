@@ -1,0 +1,197 @@
+@import './colors.sass'
+@import './media'
+
+\:root
+  --menu-tranitionspeed: .5s
+  --body-margin: .5rem
+  --body-margin-n: -.5rem
+  
+  --border-rad: .5rem
+  --border-rad-hover: .5rem
+
+  --background: rgba(100%, 100%, 100%, 85%) 
+
+  --app-c-white: #ffffff
+  --app-c-black: #000000
+  --app-c-none: rgba(0,0,0, 0%)
+
+  
+  --app-c-headline-btn-bg: var(--app-c-none)
+  --app-c-headline-btn-text: var(--app-c-white)
+  --app-c-headline-btn-bg-hover: var(--app-c-white)
+  --app-c-headline-btn-text: var(--app-c-white)
+
+
+
+
+  --accent-highlight: rgba(65, 152, 221, 0.84)
+  --accent-text: #f5f5f5
+  --accent: rgba(0, 0, 0, 100%)
+  --shadow: rgba(0, 0, 0, 50%)
+
+  --toast-red: #f00000
+  --toast-green: #08a050 
+
+  --highligh-light:  hsla(240, 50%, 35%, 1)
+  --inbetween-light: hsla(207, 75%, 30%, 1)
+  --base-light:      hsla(173, 100%, 36%, 1)
+
+  
+* 
+  font-family: Calibri, Tahoma, Helvetica, Arial, sans-serif 
+  -ms-overflow-style: none
+  scrollbar-width: none
+  
+  &::-webkit-scrollbar
+    display: none
+
+HTML
+  margin: 0px
+  padding: 0px
+  min-height: 100vh 
+  -ms-overflow-style: none  /* IE and Edge */
+  scrollbar-width: none  /* Firefox */
+
+  &::-webkit-scrollbar
+    display: none
+
+
+#AppContainer
+  position: fixed
+  overflow: scroll
+  display: block
+  height: calc(100% - 2.4cm)
+  right: 0px
+  left: 0px
+  top: 1cm
+  bottom: 1cm
+
+  transition: left var(--menu-tranitionspeed) 
+  border-radius: var(--border-rad) 0 0 var(--border-rad)
+  padding: var(--body-margin)
+  @include main-bg
+
+  @media(min-width: $media-md)  
+    left: 13.5rem
+    
+
+BODY 
+  @include gradient-bg
+  display: block
+  position: fixed
+  padding: 0px
+  margin: 0px
+  height: 100vh
+  width: 100vh
+
+  
+.row
+  margin: 0px
+  padding: 0px
+
+.btn
+  text-decoration: none
+  cursor: pointer
+  padding: var(--body-margin)
+  border-radius: var(--border-rad-hover)
+    
+.float-end
+  float: right
+
+.float-start
+  float: left
+
+
+
+.flex_center 
+  height: 100%
+  min-height: 100%
+  display: flex
+  flex-direction: column
+  align-content: stretch
+  align-items: stretch 
+
+  & > * 
+    flex-shrink: 0
+    flex-grow: 1
+    flex-direction: column
+    justify-content: center 
+
+.nav-toggle
+  height: 6mm
+  width: 6mm
+  font-size: 6mm
+  text-decoration: none
+  color: var(--accent-text) 
+
+#mainNavi 
+  position: fixed
+  left: 0px
+  width: calc(14rem)
+  top: 1cm
+  height: calc(100% - 2cm)
+  z-index: 99999
+  transform: translateY(-50%) scaleY(1) translateY(50%)
+  transition: left var(--menu-tranitionspeed) 
+
+  @media(max-width: 767px) 
+    position: fixed
+    top: 0px
+    left: -14rem  
+    padding-top: 1cm
+    @include gradient-bg
+
+  &.open 
+    left: 0rem 
+
+  & UL 
+    padding: 0px
+    margin: 0px 
+
+    & > LI 
+      display: block
+      margin-bottom: 0.5mm
+      padding-left: 3mm 
+
+      & > B 
+        color: var(--accent-text)
+        padding-left: 2mm 
+
+      & > A 
+        display: block
+        line-height: 7mm
+        width: calc(100% - 9mm)
+        padding: 1mm 3mm 1mm 3mm
+        color: var(--accent-text)
+        text-decoration: none 
+
+        &:hover 
+          backdrop-filter: invert(1)
+
+  & .mainNaviBottom
+    position: absolute
+    bottom: 0px
+    right: 0px
+    left: 0px
+
+.listoption
+  color: black
+  font-size: 1.3em
+  text-shadow: 0 0 4px rgba(0, 0, 0, 10%)
+  .fa-trash
+    color: red
+
+
+
+
+
+BODY.online .online_state::after
+  content: "ONLINE"
+  color: limegreen
+
+BODY.offline .online_state::after
+  content: "OFFLINE"
+  color: crimson
+  font-weight: bold
+
+
