@@ -3,7 +3,7 @@ export { cleanStore } from '$lib/modules/SvelteKitStaticStoreCreators'
 
 const defaultAPIURL = import.meta.env.VITE_API_BASE || "";
 
-console.log(defaultAPIURL);
+console.log("default URL:", defaultAPIURL);
 
 //=======================================================================================
 // Browser-Storage

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import STORE from '../stores'
 
 const statusEventHandlers = {
@@ -31,6 +32,7 @@ function call(method, url, opts) {
 	options.headers.Authorization = Authorization
 
 	return new Promise((resolve, reject) => {
+		/** @type {Response|null} */
 		let oRes = null;
 		fetch(`${apiurl}${url}`, options)
 			.then(data => {

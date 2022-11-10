@@ -13,7 +13,7 @@ export function createLocalStore(key_name, def) {
         resetHandlers.push(() => {
             str.set(def);
             if (!def) localStorage.removeItem(key_name);
-            else localStorage.setItem(key_name, def);
+            else localStorage.setItem(key_name, JSON.stringify(def));
         });
 
         return str;

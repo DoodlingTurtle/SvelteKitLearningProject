@@ -1,7 +1,8 @@
 <script>
     import { goto } from '$app/navigation'
-    import { loggedin } from '$lib/stores';
+    import { cleanStore, loggedin } from '$lib/stores';
     
     if($loggedin) goto("/");
+    else cleanStore();
 </script>
 <slot/>
