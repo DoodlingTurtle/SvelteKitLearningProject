@@ -1,3 +1,26 @@
+<!-- 
+Example:
+
+<FoldContainer 
+    // define initial state
+    open=false 
+
+    // react if opened or closed
+    on:toggle={ (ev) => console.log("is open": ev.detail) } 
+>
+    // Slot = "legend" is the part that can be clicked on to toggle the container
+    <h2 slot="legend">Toggle Trigger:</h2>
+
+    // Slot = "content" is what get toggles
+    <fieldset slot="content">
+        I am the part that gets opened and closed
+    </fieldset>
+
+</FoldContainer>
+
+-->
+
+
 
 <a class:active={open} href={"#"} on:click|preventDefault={ () => open = !open }>
     <slot name="legend"><em>no slot named &quot;legend&quot; found</em></slot>
@@ -14,35 +37,50 @@
     export let open = true;
     $: dispatch("toggle", open);
 
+    /**
+     * @type {HTMLDivElement | null}
+     */
     let foldingcontainer = null;
 
-    const onFoldContainerAnimationEnd = (ev) => {
+    const onFoldContainerAnimationEnd = () => {
         //only add Folding transition after the first animation played 
         // (Animations play as soon, as the item is added to the doem)
-        foldingcontainer.style.transition = "max-height .5s";
+        if(foldingcontainer)
+            foldingcontainer.style.transition = "max-height .5s";
     };
     
-    const onFoldContainerAnimationStart = (ev) => {
+    const onFoldContainerAnimationStart = (/** @type {{ animationName: string; }} */ ev) => {
         if(ev.animationName == "folding-container-close") {
-            foldingcontainer.style.maxHeight = foldingcontainer.offsetHeight + "px";
-            window.setTimeout(() => foldingcontainer.style.maxHeight = "");
+            if(foldingcontainer)
+                foldingcontainer.style.maxHeight = foldingcontainer.offsetHeight + "px";
+
+            window.setTimeout(() => {
+                if(foldingcontainer)
+                    foldingcontainer.style.maxHeight = ""
+            });
         }
         else if (ev.animationName == "folding-container-open"){
-            foldingcontainer.style.maxHeight = "";
+            if(foldingcontainer)
+                foldingcontainer.style.maxHeight = "";
         }
     };
 
 
 
     onMount(() => {
-        foldingcontainer.addEventListener("animationstart", onFoldContainerAnimationStart);
-        foldingcontainer.addEventListener("animationend", onFoldContainerAnimationEnd);
+        if(foldingcontainer) {
+            foldingcontainer.addEventListener("animationstart", onFoldContainerAnimationStart);
+            foldingcontainer.addEventListener("animationend", onFoldContainerAnimationEnd);
+        }
     })
 
     onDestroy(() => {
-        foldingcontainer.removeEventListener("animationstart", onFoldContainerAnimationStart);
-        foldingcontainer.removeEventListener("animationend", onFoldContainerAnimationEnd);
+        if(foldingcontainer) {
+            foldingcontainer.removeEventListener("animationstart", onFoldContainerAnimationStart);
+            foldingcontainer.removeEventListener("animationend", onFoldContainerAnimationEnd);
+        }
     })
+
 
 </script>
 

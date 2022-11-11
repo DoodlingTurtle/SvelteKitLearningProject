@@ -1,3 +1,38 @@
+<!-- Example:
+
+<FlowyGrid 
+
+    // Defines the layout based on media querys
+    // @media querys are the key, the styles are the value
+    layouts = {{
+        /* Default Layout (Mobile first) */
+        ""                  :    "grid-template-areas: 'ma' 'mo' 'se' ; grid-template-columns: 1fr",
+
+        /* Layout changes if the screens min with is 992px */
+        "(min-width: 992px)":    "grid-template-areas: 'ma mo' 'se se'; grid-template-columns: 1fr 1fr;",
+
+        /* Layout layout changes if the screens min with is 1200 */        
+        "(min-width: 1200px)":   "grid-template-areas: 'ma mo' 'se mo'; grid-template-columns: 2fr 1fr; grid-template-rows: 0fr 1fr",
+    }}
+
+    // List of componets, that are shifted arround, if the layout switches 
+    // See @typedef ComponentListEntry below for mor details
+    
+    components={[
+        {component: MyAccount,   style: "grid-area: ma", props: {'onclick': onPWChange }},
+        {component: Privileges,  style: "grid-area: mo"  },
+        {component: Sessions,    style: "grid-area: se"  },
+    ]} 
+    
+    // These propes override / extend the props given to the component above.
+    // A quick way to pass the same data to all components inside the list 
+    props={{data}} 
+
+/>
+
+-->
+
+
 <script>
 // @ts-nocheck
     import { beforeUpdate, onDestroy, onMount } from "svelte";
