@@ -36,7 +36,7 @@
 
     <ul class="mainNaviBottom">
         {#if $user_privilges['core']||false}
-        <li><a href="/settings"><i class="fa fa-gear" />&nbsp;Settings</a></li>
+        <li><a href="/settings.html"><i class="fa fa-gear" />&nbsp;Settings</a></li>
         {/if}
     </ul>
 </nav>

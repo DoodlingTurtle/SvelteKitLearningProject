@@ -1,7 +1,7 @@
 
 <script>
     import { getContext } from "svelte";
-    import FoldContainer from "../FoldContainer.svelte";
+    import FoldContainer from "$lib/components/FoldContainer.svelte";
     
     export let data = {}
     export let onclick=() => {}
@@ -26,7 +26,7 @@
 
 
 <style lang="scss">
-    @import '../../css/media.sass';
+    @import 'media.sass';
 
     .frm-myaccount {
         display: grid;

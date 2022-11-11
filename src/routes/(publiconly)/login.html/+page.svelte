@@ -2,13 +2,13 @@
     <h1 class="flex_fill">Login</h1>
     <div class="spacer"></div>
 
-    {#if $loginPageErrorMessage}
-    <div class="errorMsg">
-        {$loginPageErrorMessage}
-    </div>
-    {/if}
 
     <form on:submit|preventDefault={onSubmit} method="POST" class="login-frm">
+        {#if $loginPageErrorMessage}
+        <div class="errorMsg">
+            {@html htmlentities($loginPageErrorMessage, true)}
+        </div>
+        {/if}
         <label class="login-frm-label-login" for="login">Login:</label>
         <input class="login-frm-input-login" type="text" bind:value={user} />
 
@@ -30,6 +30,7 @@
     import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
     import ToastMsg from '$lib/modules/ToastMsg';
+    import {htmlentities} from '$lib/utils';
 
     let user = "";
     let pass = "";
@@ -100,11 +101,14 @@
       }
 
       .errorMsg {
-        padding-inline: 2rem;
-        flex-grow: 0;
-        text-align: center;
+        //padding-inline: 2rem;
+        text-align: left;
         color: red;
         font-weight: bold;
+
+        grid-area: error;
+
+        margin-bottom: 1.5rem;
       }
     }
 
@@ -139,10 +143,11 @@
         width: 100%;
 
         grid-template-columns: 0.125fr 1fr 0.125fr;
-        grid-template-rows: 1fr repeat(5, 0fr) 1fr;
+        grid-template-rows: 0.5fr repeat(6, 0fr) 1fr;
 
         grid-template-areas:
             ". .      ."
+            ". error ."
             ". llogin ."
             ". ilogin ."
             ". lpass  ."
@@ -178,10 +183,11 @@
     @media (min-width: $media-sm) {
         .login-frm {
             grid-template-columns: 0.5fr 0.25fr 1fr 0.5fr;
-            grid-template-rows: 1fr 0fr 0fr 0fr 1fr;
+            grid-template-rows: 0.5fr repeat(4, 0fr) 1fr;
 
             grid-template-areas:
                 ". .      .      ."
+                ". error  error  ."
                 ". llogin ilogin ."
                 ". lpass  ipass  ."
                 ". submit submit ."

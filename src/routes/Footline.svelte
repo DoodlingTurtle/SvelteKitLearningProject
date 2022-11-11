@@ -1,6 +1,6 @@
 <footer id="mainFooterline">
     {#if $user_privilges.edit_user}
-      <a href="/users" class="fa fa-solid fa-user">&nbsp;</a>
+      <a href="/list_users.html" class="fa fa-solid fa-user">&nbsp;</a>
     {/if}
 
     <span></span>
@@ -10,8 +10,8 @@
 </footer>
 
 <style lang="scss">
-@import '../css/media.sass';
-@import '../css/colors.sass';
+@import 'media.sass';
+@import 'colors.sass';
 
 footer {
 
@@ -59,7 +59,7 @@ footer {
 </style>
 
 <script>
-    import { user_privilges } from "../stores";
+    import { user_privilges } from "../lib/stores";
 
 
 </script>

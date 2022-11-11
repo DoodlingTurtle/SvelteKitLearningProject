@@ -18,14 +18,14 @@
     {#if $loggedin}
         <BtnLogout cssClass="float-end" />
     {:else}
-        <a href="login.html" class="btn" 		        data-header="login" >Login</a>
+        <a href="/login.html" class="btn" 		        data-header="login" >Login</a>
     {/if}
 </header>
 
 
 <style lang="sass" global>
-  @import '../css/media'
-  @import '../css/colors'
+  @import 'media.sass'
+  @import 'colors.sass'
 
   HEADER#mainHeadline
     display: block

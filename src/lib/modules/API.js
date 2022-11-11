@@ -1,5 +1,5 @@
 // @ts-nocheck
-import STORE from '../stores'
+import STORE from '$lib/stores'
 
 const statusEventHandlers = {
 

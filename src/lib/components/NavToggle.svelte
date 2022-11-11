@@ -1,5 +1,5 @@
 <script> 
-  import { menuOpen } from "../stores"; 
+  import { menuOpen } from "$lib/stores"; 
 
   const toggleMenu = () => $menuOpen = !$menuOpen;
 

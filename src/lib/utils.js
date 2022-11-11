@@ -33,6 +33,17 @@ export function formatDateTime(input) {
 }
 
 
+/**
+ * @param {string} str
+ */
+export function htmlentities(str, nl2br=false) {
+    let newstr = str.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
+    if (nl2br) newstr = newstr.replace(/\r/g, "").replace(/\n/g, "<br />");
+    return newstr;
+}
+
+
+
 export default {
-    formatDate, formatDateTime
+    formatDate, formatDateTime, htmlentities
 }

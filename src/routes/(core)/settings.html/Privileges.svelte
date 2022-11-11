@@ -1,6 +1,6 @@
 <script>
     import { getContext } from "svelte";
-    import FoldContainer from "../FoldContainer.svelte";
+    import FoldContainer from "$lib/components/FoldContainer.svelte";
     
     let context = getContext("settingsfrm");
     export let data = {}

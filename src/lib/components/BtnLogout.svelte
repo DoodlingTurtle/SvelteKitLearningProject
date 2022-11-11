@@ -1,6 +1,6 @@
 <script>
     import {goto} from '$app/navigation';
-    import { api, cleanStore, loggedin } from '../stores';
+    import { api, cleanStore, loggedin } from '$lib/stores';
     import Modal from './Modal.svelte';
     import {DELETE} from "../modules/API.js";
 
