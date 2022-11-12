@@ -113,7 +113,7 @@
     });
 
     let cycle = 0;
-    beforeUpdate(() => {
+    beforeUpdate((ev) => {
         let cnt = 0;
         components.forEach( (c) => c.id = cycle + cnt++)
     })
@@ -121,7 +121,10 @@
     //const [ send, receive ] = crossfade({duration: d => Math.sqrt(d*1000)});
     const [send, receive] = crossfade({
         duration: 1000,
-        fallback: (t, u) => `opacity: 0`
+        fallback: (t, u) => {
+            t.style.height="0px";
+            return ``;
+        }
     });
 
     function hijackCrossFade(fnc, op) {
@@ -164,7 +167,7 @@
 
 </script>
 
-<div class="flowygrid-layout" {style}>
+<div class="flowygrid-layout" {style} >
     {#key style}
     {#each components as component (component.id)}
     <div 

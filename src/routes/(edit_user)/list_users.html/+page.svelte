@@ -1,4 +1,9 @@
 <script>
     import PageTitle from "$lib/components/PageTitle.svelte";
+    import { fade } from "svelte/transition";
 </script>
-<PageTitle alternateContainer="#ApplicationTitleBar" scrollListener="#AppContainer">Users list:</PageTitle>
+
+
+<div class="page-users-list" in:fade>
+    <PageTitle alternateContainer="#ApplicationTitleBar" scrollListener="#AppContainer">Userlist</PageTitle>
+</div>
