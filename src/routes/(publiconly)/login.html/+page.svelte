@@ -26,7 +26,7 @@
 </section>
 
 <script>
-	import {api, username, loggedin, loginPageErrorMessage, user_privilges } from '$lib/stores.js';
+	import {api, username, loggedin, loginPageErrorMessage, user_modules } from '$lib/stores.js';
     import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
     import ToastMsg from '$lib/modules/ToastMsg';
@@ -51,7 +51,7 @@
             };
             $username = jsonRes['displayname'];
             $loggedin = true;
-            console.log($user_privilges = jsonRes['modules']);
+            console.log($user_modules = jsonRes['modules']);
             goto("/") 
 
         }
@@ -72,12 +72,6 @@
                     ToastMsg.toast(`${response.status}: ${msg}`, "var(--toast-red)", 2000);
             }
         }
-
-
-
-
-
-
     }
 </script>
 

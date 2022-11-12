@@ -41,7 +41,7 @@
 
 <div class="page-settings" transition:fade>
 
-    <PageTitle alternateContainer="#ApplicationTitleBar" scrollListener="#AppContainer">Account-Settings</PageTitle>
+    <PageTitle alternateContainer="#ApplicationTitleBar" scrollListener="#AppContainer">Your account</PageTitle>
     
     {#await fetchPromise}
         <Loader />

@@ -1,5 +1,5 @@
 <footer id="mainFooterline">
-    {#if $user_privilges.edit_user}
+    {#if $user_modules.edit_user}
       <a href="/list_users.html" class="fa fa-solid fa-user">&nbsp;</a>
     {/if}
 
@@ -59,7 +59,7 @@ footer {
 </style>
 
 <script>
-    import { user_privilges } from "../lib/stores";
+    import { user_modules } from "../lib/stores";
 
 
 </script>

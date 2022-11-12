@@ -1,10 +1,10 @@
 <script>
-    import { menuOpen, user_privilges } from "$lib/stores";
+    import { menuOpen, user_modules } from "$lib/stores";
     import NavToggle from "$lib/components/NavToggle.svelte";
 
     const leave = () => ($menuOpen = false);
 
-    $: console.log("User-Priv:", $user_privilges);
+    $: console.log("User-Priv:", $user_modules);
 
 </script>
 
@@ -35,7 +35,7 @@
     </ul>
 
     <ul class="mainNaviBottom">
-        {#if $user_privilges['core']||false}
+        {#if $user_modules['core']||false}
         <li><a href="/settings.html"><i class="fa fa-gear" />&nbsp;Settings</a></li>
         {/if}
     </ul>

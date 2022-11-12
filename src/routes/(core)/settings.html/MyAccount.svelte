@@ -11,7 +11,7 @@
 </script>
     
 <FoldContainer open={context.myAccountFold} on:toggle={(ev) => {(context.myAccountFold = ev.detail); }} >
-    <h2 slot="legend" class="btn {context.myAccountFold ? 'active' : ''}">MyAccount:</h2>
+    <h2 slot="legend" class="btn {context.myAccountFold ? 'active' : ''}">Settings:</h2>
 
     <fieldset slot="content" class="frm-myaccount">
         <p class="mt-1 mb-3 mt-sm-1 mb-sm-3"    >Here you can change anything in regards to your Account and the App</p>
