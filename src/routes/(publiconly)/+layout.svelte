@@ -1,12 +1,11 @@
 <script>
-    import { browser } from '$app/environment';
-    import { goto } from '$app/navigation'
-    import { cleanStore, loggedin } from '$lib/stores';
-   
-    $: show = (!$loggedin) ;   
+    import RedirectGate from "$lib/components/RedirectGate.svelte";
+    import { loggedin } from "$lib/stores";
 
-    if(browser && $loggedin) goto("/");
 </script>
-{#if show}
-<slot/>
-{/if}
+<RedirectGate
+    passcondition={ !$loggedin }
+    redirect="/"
+>
+    <slot />
+</RedirectGate>

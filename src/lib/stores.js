@@ -10,8 +10,8 @@ console.log("default URL:", defaultAPIURL);
 //=======================================================================================
  export let username = createLocalStore("username", "");
  export let loggedin = createLocalStore("loggedin", false);
- export let user_privilges = createLocalStore("user_privileges", {core: false});
- export let api            = createLocalStore("api", {
+ export let user_modules = createLocalStore("user_modules", {core: false});
+ export let api      = createLocalStore("api", {
         url: defaultAPIURL,
         token: ""
     });
@@ -22,4 +22,4 @@ console.log("default URL:", defaultAPIURL);
 export let menuOpen = createVarStore(false);
 export let loginPageErrorMessage = createVarStore("");
 
-export default { api, username, loggedin, user_privilges, cleanStore, loginPageErrorMessage }
+export default { api, username, loggedin, user_modules, cleanStore, loginPageErrorMessage }

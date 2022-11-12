@@ -1,11 +1,11 @@
-<script>
-    import { browser } from '$app/environment';
-    import { goto } from '$app/navigation'
-    import { user_privilges } from '$lib/stores';
-  
-    $: show = ($user_privilges.edit_user||false) ;   
-    
-    if(browser && !show) { goto("/"); }    
-
+<script lang="ts">
+    import RedirectGate from '$lib/components/RedirectGate.svelte';
+    import { user_modules } from '$lib/stores';
 </script>
-{#if show} <slot /> {/if}
+
+<RedirectGate 
+    passcondition={$user_modules.edit_user||false} 
+    logout={true}
+>
+    <slot />
+</RedirectGate>

@@ -31,6 +31,7 @@
 
         goto("/login.html");
     })
+
 </script>
 
 <div id="AppContainer">
