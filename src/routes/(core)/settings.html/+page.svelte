@@ -39,7 +39,7 @@
 </script>
 
 
-<div class="page-settings" transition:fade>
+<div class="page-settings" in:fade>
 
     <PageTitle alternateContainer="#ApplicationTitleBar" scrollListener="#AppContainer">Your account</PageTitle>
     
