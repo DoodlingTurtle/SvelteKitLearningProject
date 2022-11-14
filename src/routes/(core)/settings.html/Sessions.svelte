@@ -59,9 +59,6 @@
         sessions = sessions.filter((s) => s.id != sessID);
     }
 
-
-
-
 </script>
 
 
