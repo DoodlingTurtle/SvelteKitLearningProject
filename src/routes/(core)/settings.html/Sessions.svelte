@@ -38,7 +38,7 @@
     import FoldContainer from "$lib/components/FoldContainer.svelte";
     import Loader from "$lib/components/Loader.svelte";
 
-    import { formatDateTime } from "$lib/modules/utils";
+    import { formatDateTime } from "$lib/utils";
 
     interface ContextObj  {
         sessionsFold: boolean
