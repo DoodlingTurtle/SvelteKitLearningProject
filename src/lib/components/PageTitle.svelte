@@ -9,7 +9,7 @@
     /** @type {HTMLElement | null} */
     let altContainer = null;
 
-    export let onChange = (state) => {};
+    export let onChange = (/**@type {boolean}*/ state) => {};
     
     const on = createEventDispatcher();
 

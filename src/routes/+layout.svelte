@@ -15,7 +15,7 @@
     //======================================================================
     // Modules
     //======================================================================
-    import API from '$lib/modules/API';
+    import API from '$lib/api';
     import { goto } from '$app/navigation';
     import { cleanStore, loginPageErrorMessage } from '$lib/stores';
 

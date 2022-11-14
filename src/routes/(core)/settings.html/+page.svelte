@@ -1,6 +1,6 @@
 <script>
     // @ts-nocheck
-    import { GET } from "$lib/modules/API.js";
+    import { GET } from "$lib/api.js";
 
     import PageTitle from '$lib/components/PageTitle.svelte';
     import Loader from "$lib/components/Loader.svelte";

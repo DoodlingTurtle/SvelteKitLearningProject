@@ -34,7 +34,7 @@
     import { getContext } from "svelte";
     import { flip } from 'svelte/animate';
 
-    import { GET, DELETE } from "$lib/modules/API.js";
+    import { GET, DELETE } from "$lib/api.js";
     import FoldContainer from "$lib/components/FoldContainer.svelte";
     import Loader from "$lib/components/Loader.svelte";
 
