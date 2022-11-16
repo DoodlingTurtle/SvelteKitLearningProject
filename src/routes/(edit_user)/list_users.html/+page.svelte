@@ -24,7 +24,7 @@
 <div class="page-users-list" in:fade>
     <PageTitle alternateContainer="#ApplicationTitleBar" scrollListener="#AppContainer">Userlist</PageTitle>
 
-{#await GET("/users", {expect: "json"}).then( res => [...res.data, ...res.data] )}
+{#await GET("/users", {expect: "json"}).then( res => res.data )}
     Loading ...
 {:then list}
     <section class="users-list">
