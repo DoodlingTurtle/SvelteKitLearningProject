@@ -22,6 +22,19 @@
 .ml-3 { margin-bottom: .75rem !important; }
 .ml-4 { margin-bottom: 1rem !important; }
 
+.xs-shown { display: none; }
+.sm-shown { display: none; }
+.md-shown { display: none; }
+.lg-shown { display: none; }
+.xl-shown { display: none; }
+.xxl-shown { display: none; }
+
+.xs-hidden  { display: initial; }
+.sm-hidden  { display: initial; }
+.md-hidden  { display: initial; }
+.lg-hidden  { display: initial; }
+.xl-hidden  { display: initial; }
+.xxl-hidden { display: initial; }
 
 @media (min-width: $media-xs) {
 
@@ -46,9 +59,10 @@
     .ml-xs-2 { margin-bottom: .5rem !important; }
     .ml-xs-3 { margin-bottom: .75rem !important; }
     .ml-xs-4 { margin-bottom: 1rem !important; }
+
+    .xs-show { display: initial; }
+    .xs-hidden { display: none; }
 }
-
-
 
 @media (min-width: $media-sm) {
 
@@ -73,6 +87,9 @@
     .ml-sm-2 { margin-bottom: .5rem !important; }
     .ml-sm-3 { margin-bottom: .75rem !important; }
     .ml-sm-4 { margin-bottom: 1rem !important; }
+
+    .sm-shown { display: initial; }
+    .sm-hidden { display: none; }
 }
 
 @media (min-width: $media-md) {
@@ -97,6 +114,9 @@
     .ml-md-2 { margin-bottom: .5rem !important; }
     .ml-md-3 { margin-bottom: .75rem !important; }
     .ml-md-4 { margin-bottom: 1rem !important; }
+
+    .md-shown { display: initial; }
+    .md-hidden { display: none; }
 }
 
 @media (min-width: $media-lg) {
@@ -121,6 +141,9 @@
     .ml-lg-2 { margin-bottom: .5rem !important; }
     .ml-lg-3 { margin-bottom: .75rem !important; }
     .ml-lg-4 { margin-bottom: 1rem !important; }
+
+    .lg-shown { display: initial; }
+    .lg-hidden { display: none; }
 }
 
 @media(min-width: $media-xl) {
@@ -145,6 +168,9 @@
     .ml-xl-2 { margin-bottom: .5rem !important; }
     .ml-xl-3 { margin-bottom: .75rem !important; }
     .ml-xl-4 { margin-bottom: 1rem !important; }
+
+    .xl-shown { display: initial; }
+    .xl-hidden { display: none; }
 }
 
 @media(min-width: $media-xxl) {
@@ -169,4 +195,7 @@
     .ml-xxl-2 { margin-bottom: .5rem !important; }
     .ml-xxl-3 { margin-bottom: .75rem !important; }
     .ml-xxl-4 { margin-bottom: 1rem !important; }
+
+    .xxl-shown { display: initial; }
+    .xxl-hidden { display: none; }
 }
