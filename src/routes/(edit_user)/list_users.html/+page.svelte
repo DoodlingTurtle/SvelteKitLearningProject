@@ -1,10 +1,14 @@
 <script lang="ts">
     import PageTitle from "$lib/components/PageTitle.svelte";
+    import BtnDelete from "$lib/components/BtnDelete.svelte";
 
-    import { fade } from "svelte/transition";
-    import { GET } from '$lib/api'
+    import { fade, slide } from "svelte/transition";
+    import { flip } from "svelte/animate"
+    import { DELETE, GET } from '$lib/api'
 
     import { htmlentities } from '$lib/utils';
+    import Loader from "$lib/components/Loader.svelte";
+    import { onMount } from "svelte";
 
     interface ListEntry {
         id:number,
@@ -18,20 +22,40 @@
         updated: string
     }
 
+    let userList :ListEntry[] = [];
+
+    let actionPromise = Promise.resolve();
+
+    onMount(() => {
+        actionPromise = GET("/users", {expect: 'json'}).then( res => userList = res.data );
+    })
+
+    const onDelete = (userID: number) => {
+        console.log(userID);
+        actionPromise = DELETE(`/user/${userID}`).then( () => {
+            console.log("then");
+            actionPromise = GET("/users", {expect: 'json'}).then( res => userList = res.data );
+        })
+    }
 </script>
 
 
 <div class="page-users-list" in:fade>
     <PageTitle alternateContainer="#ApplicationTitleBar" scrollListener="#AppContainer">Userlist</PageTitle>
 
-{#await GET("/users", {expect: "json"}).then( res => res.data )}
-    Loading ...
-{:then list}
     <section class="users-list">
 
-        {#each list as entry}
+    {#await actionPromise}
+        <Loader />
+    {:catch err}
+        <article in:slide>
+            {err}
+        </article>
+    {/await}
+
+    {#each userList as entry (entry.id)}
         {@const htmlrights=htmlentities(entry.rights.replace(/,/g, "\n"), true)}
-        <article class="entry mb-2">
+        <article class="entry mb-2" animate:flip>
 
             <b style="grid-area: hid____">ID:</b>
             <b style="grid-area: hlogin_">Login:</b>
@@ -51,17 +75,18 @@
 			</div>
 
             <div style="grid-area: options"> 
-                <a href={"#"}><li class="fa fa-trash"></li></a>
+                <BtnDelete 
+                    confirmMsg="Removing this user can not be undone. Continue?" 
+                    labelYes = "Yes"
+                    labelNo = "No"
+                    on:click={() => onDelete(entry.id)}
+                />
                 <a href={"#"}><li class="fa fa-folder"></a>
             </div>
 
         </article>
-        {/each}
+    {/each}
     </section>
-
-    {:catch err}
-        {err.message}
-    {/await}
 </div>
 
 <style lang="scss">

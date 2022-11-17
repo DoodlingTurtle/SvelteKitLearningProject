@@ -15,13 +15,15 @@
 {#if open}
 <div class="modalContainer" in:fade out:fade>
     <div class="modalBackdrop {backdropClass}"> </div>
-    <div class="modalContent {contentClass}"> 
+    <div class="modalContent Modal"> 
         <slot />
     </div>
 </div>
 {/if}
 
 <style lang="scss">
+    @import '../css/colors.sass';
+
     .modalContainer {
         position: fixed;
         inset: 0;
@@ -29,6 +31,8 @@
         display: flex;
         justify-content: center;
         place-items: center;
+
+        z-index: 99999;
 
         .modalBackdrop {
             display:block;
@@ -43,6 +47,18 @@
             flex-shrink: 0;
             padding: var(--border-rad);
             border-radius: var(--border-rad);
+
+            border: none;
+            outline: none;
+            box-shadow: 2px 2px 4px var(--shadow);
+            border-radius: var(--border-rad);
+            color: var(--accent-text);
+            @include gradient-bg;
+            
+            :global(.btn) {
+                background-color: var(--accent-text);
+                color: black;
+            }
         }
     }
 </style>

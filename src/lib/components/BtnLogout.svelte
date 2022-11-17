@@ -28,7 +28,7 @@
     </a>
 
     {#if dialogOpen}
-    <span class={"modalwrapper"}>
+    <span class="modalwrapper">
     <Modal contentClass={"Modal"} open={dialogOpen}>
         <p class="f-bold">You are now leaving the Application</p>
         <a class="btn float-start" href={"#"} on:click|preventDefault={logout} >OK</a>
@@ -44,25 +44,3 @@
 <!----------------------------------------------------------------------------------
 | Styles
 ----------------------------------------------------------------------------------->
-<style lang="scss">
-    @import '../css/colors.sass';
-
-    .modalwrapper {
-        :global(.Modal) {
-            border: none;
-            outline: none;
-            box-shadow: 2px 2px 4px var(--shadow);
-            border-radius: var(--border-rad);
-            color: var(--accent-text);
-            @include gradient-bg;
-            
-            :global(.btn) {
-                background-color: var(--accent-text);
-                color: black;
-            }
-        }
-
-        z-index: 99999;
-
-    }
-</style>

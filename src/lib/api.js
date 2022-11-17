@@ -36,19 +36,32 @@ function call(method, url, opts) {
 		let oRes = null;
 		fetch(`${apiurl}${url}`, options)
 			.then(data => {
-				oRes = data;
-				switch (resType) {
-					case 'json': return data.json();
-					case 'text': return data.text();
-					case 'formData': return data.formData();
-					case 'blob': return data.blob();
-					case 'arrayBuffer': return data.arrayBuffer();
-					default: return Promise.resolve(undefined)
+
+				switch(data.status) {
+					case 400: 
+					case 500: 
+						case 'text': data.text().then( txt => reject(new Error(txt))  );
+						return null;
+
+					default:
+						oRes = data;
+						switch (resType) {
+							case 'json': return data.json();
+							case 'text': return data.text();
+							case 'formData': return data.formData();
+							case 'blob': return data.blob();
+							case 'arrayBuffer': return data.arrayBuffer();
+							default: return Promise.resolve(undefined)
+						}
+						break;
 				}
+
 			})
 			.then(data => {
-				oRes.data = data
-				resolve(oRes);
+				if(oRes) {
+					oRes.data = data
+					resolve(oRes);
+				}
 			})
 			.catch( (...args) => {
 				if(oRes && oRes.status && !ignore[oRes.status] && statusEventHandlers[oRes.status]) {
@@ -56,6 +69,7 @@ function call(method, url, opts) {
 						h(oRes);
 					} )
 				}
+
 				reject.apply(null, args)
 			} )
 	});

@@ -20,7 +20,10 @@
                     <p style="grid-area: orc">{session.data.origin}</p>
 
                     <div style="grid-area: opt" >
-                        <a href={"#"} class="btn listoption" on:click|preventDefault={() => dropSession(session.id)}><li class="fa fa-trash"/></a>
+                        <BtnDelete 
+                            on:click={ () => dropSession(session.id) } 
+                            confirmMsg="This will end the session for what ever device is connected to it"
+                        />
                     </div>
                 </article>
             {/each}
@@ -35,6 +38,8 @@
     import { flip } from 'svelte/animate';
 
     import { GET, DELETE } from "$lib/api.js";
+
+    import BtnDelete from "$lib/components/BtnDelete.svelte";
     import FoldContainer from "$lib/components/FoldContainer.svelte";
     import Loader from "$lib/components/Loader.svelte";
 
