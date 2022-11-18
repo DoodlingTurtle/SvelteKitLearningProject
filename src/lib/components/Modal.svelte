@@ -1,21 +1,27 @@
 <script>
     import { fade } from 'svelte/transition'
-    export let contentClass = "";
-    export let backdropClass = "";
+    export const contentClass="";
+    export const backdropClass="";
 
     export let open = true;
 
-    $: if(open)
-        document.querySelector("BODY").style.overflow = "hidden";
-    else 
-        document.querySelector("BODY").style.overflow = "";
+    $: if(open) {
+        /** @type HTMLElement | null */ 
+        const body = document.querySelector("BODY");
+        if(body) body.style.overflow = "hidden";
+    }
+    else {
+        /** @type HTMLElement | null */ 
+        const body = document.querySelector("BODY");
+        if(body) body.style.overflow = "";
+    }
     
 </script>
 
 {#if open}
 <div class="modalContainer" in:fade out:fade>
     <div class="modalBackdrop {backdropClass}"> </div>
-    <div class="modalContent Modal"> 
+    <div class="modalContent Modal {contentClass}"> 
         <slot />
     </div>
 </div>
