@@ -4,8 +4,6 @@
 
     const leave = () => ($menuOpen = false);
 
-    $: console.log("User-Priv:", $user_modules);
-
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

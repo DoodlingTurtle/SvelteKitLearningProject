@@ -26,7 +26,6 @@ function daySuffix(day) {
 /** @param {string | number | Date} input */
 export function formatDate(input) {
     const d = new Date(input);
-    console.log(d.getDate());
     const m = monthTr.get(d.getMonth() + 1);
 
     return `${m} ${daySuffix(d.getDate())} ${d.getFullYear()}`
