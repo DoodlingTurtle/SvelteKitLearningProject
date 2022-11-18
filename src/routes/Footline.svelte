@@ -1,6 +1,6 @@
 <footer id="mainFooterline">
     {#if $user_modules.edit_user}
-      <a href="/list_users.html" class="fa fa-solid fa-user">&nbsp;</a>
+      <a href="/users/list.html" class="fa fa-solid fa-user">&nbsp;</a>
     {/if}
 
     <span></span>

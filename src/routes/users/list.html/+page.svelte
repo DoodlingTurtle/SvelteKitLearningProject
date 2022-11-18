@@ -31,9 +31,7 @@
     })
 
     const onDelete = (userID: number) => {
-        console.log(userID);
         actionPromise = DELETE(`/user/${userID}`).then( () => {
-            console.log("then");
             actionPromise = GET("/users", {expect: 'json'}).then( res => userList = res.data );
         })
     }
@@ -48,7 +46,7 @@
     {#await actionPromise}
         <Loader />
     {:catch err}
-        <article in:slide>
+        <article class="errormsg" in:slide>
             {err}
         </article>
     {/await}
@@ -81,7 +79,12 @@
                     labelNo = "No"
                     on:click={() => onDelete(entry.id)}
                 />
-                <a href={"#"}><li class="fa fa-folder"></a>
+                <a 
+                    href={`./edit.html?uid=${entry.id}`}
+                    class="btn listoption"
+                >
+                    <li class="fa fa-folder">
+                </a>
             </div>
 
         </article>
@@ -91,6 +94,10 @@
 
 <style lang="scss">
     @import "media.sass";
+
+    article.errormsg {
+        color: red;
+    } 
 
     .users-list article {
         grid-gap: .5rem;

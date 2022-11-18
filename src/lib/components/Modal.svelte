@@ -1,31 +1,30 @@
 <script>
+    import { onDestroy, onMount } from 'svelte';
     import { fade } from 'svelte/transition'
     export const contentClass="";
     export const backdropClass="";
 
     export let open = true;
 
-    $: if(open) {
-        /** @type HTMLElement | null */ 
-        const body = document.querySelector("BODY");
-        if(body) body.style.overflow = "hidden";
-    }
-    else {
-        /** @type HTMLElement | null */ 
-        const body = document.querySelector("BODY");
-        if(body) body.style.overflow = "";
-    }
+    /** @type {HTMLElement}*/
+    let me;
+
+    onMount(()=>{ document.body.appendChild(me); })
+
+    $: if(open) 
+        document.body.style.overflow = "hidden";
+    else 
+        document.body.style.overflow = "";
     
+
 </script>
 
-{#if open}
-<div class="modalContainer" in:fade out:fade>
+<div class="modalContainer" in:fade out:fade bind:this={me}>
     <div class="modalBackdrop {backdropClass}"> </div>
     <div class="modalContent Modal {contentClass}"> 
         <slot />
     </div>
 </div>
-{/if}
 
 <style lang="scss">
     @import '../css/colors.sass';
@@ -45,7 +44,7 @@
             position: absolute;
             inset: 0;
             background-color: rgba(0, 0, 0, .666);
-            z-index: -1;
+            z-index: 1;
         }
 
         .modalContent {
@@ -65,6 +64,8 @@
                 background-color: var(--accent-text);
                 color: black;
             }
+
+            z-index: 2;
         }
     }
 </style>

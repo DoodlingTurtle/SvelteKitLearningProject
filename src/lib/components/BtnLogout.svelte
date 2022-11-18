@@ -28,8 +28,7 @@
     </a>
 
     {#if dialogOpen}
-    <span class="modalwrapper">
-    <Modal contentClass={"Modal"} open={dialogOpen}>
+    <Modal>
         <p class="f-bold">You are now leaving the Application</p>
         <a class="btn float-start" href={"#"} on:click|preventDefault={logout} >OK</a>
         <a class="btn float-end" href={"#"} on:click|preventDefault={ () => dialogOpen=false }>
@@ -37,10 +36,5 @@
         </a >
         <div style="clear: both" />
     </Modal>
-    </span>
     {/if}
 {/if}
-
-<!----------------------------------------------------------------------------------
-| Styles
------------------------------------------------------------------------------------>

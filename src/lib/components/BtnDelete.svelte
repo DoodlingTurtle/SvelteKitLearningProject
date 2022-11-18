@@ -29,7 +29,8 @@
     <li class="fa fa-trash"/>
 </a>
 
-<Modal open={dialogOpen} >
+{#if dialogOpen}
+<Modal>
     <div>
         <p class="f-bold">{confirmMsg}</p>
         <a class="btn float-start" href={"#"} on:click|preventDefault={() => {
@@ -42,7 +43,7 @@
         <div style="clear: both" />
     </div>
 </Modal>
-
+{/if}
 
 <style>
     DIV {

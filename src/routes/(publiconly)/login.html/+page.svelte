@@ -36,7 +36,6 @@
     let pass = "";
 
     const onSubmit = async () => {
-        console.log("submit")
         let response = await fetch(`${$api.url}/login`, {
             method: "post",
             headers: { 'content-type': 'application/x-www-form-urlencoded' },
@@ -51,7 +50,7 @@
             };
             $username = jsonRes['displayname'];
             $loggedin = true;
-            console.log($user_modules = jsonRes['modules']);
+            $user_modules = jsonRes['modules'];
             goto("/") 
 
         }

@@ -46,7 +46,7 @@
         color: white
         overflow: hidden 
         z-index: 100000 
-
+        
         @media(max-width: $media-md)
             width: calc(100vw - 3rem)
             margin: .5rem

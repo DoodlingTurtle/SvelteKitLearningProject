@@ -32,7 +32,7 @@
     })
 
     function onPWChange(ev) {
-        console.log("myaccount on click");
+        alert("TODO Implement");
     }
 
 
