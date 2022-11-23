@@ -1,17 +1,25 @@
 // @ts-nocheck
-import STORE from '$lib/stores'
+import {api_token, api_url} from '$lib/stores'
 
-const statusEventHandlers = {
+const statusEventHandlers = { }
+export function addResponseListener(httpStatus, handler) {
+	if(typeof(handler) != 'function') return;
+	const s = parseInt(httpStatus);
+	if(!statusEventHandlers[s]) statusEventHandlers[s] = [];
+	statusEventHandlers[s].push(handler);
+}
+export function removeResponseListener(httpStatus, handler) {
+	const s = parseInt(httpStatus);
+	if(!statusEventHandlers[s]) return;
 
+	statusEventHandlers[s] = statusEventHandlers[s].filter((h) => h !== handler);
 }
 
 let apiurl = "";
 let Authorization = "";
 
-STORE.api.subscribe(obj => {
-	apiurl = obj.url;
-	Authorization = `Bearer ${obj.token}`
-});
+api_token.subscribe(obj => Authorization = `Bearer ${obj}` );
+api_url  .subscribe(obj => { console.log("apiurl-update: ", obj); apiurl = obj } );
 
 function call(method, url, opts) {
 	const resType = opts.expect || "";
@@ -38,7 +46,14 @@ function call(method, url, opts) {
 
 	options.headers.Authorization = Authorization
 
-	return new Promise((resolve, reject) => {
+	return new Promise(async (resolve, reject) => {
+
+		if(typeof(apiurl) != 'string' || apiurl.trim() == "") {
+			let settings = await (await fetch("/settings.json")).json();
+			apiurl = settings.defaultAPIURL;
+			api_url.set(settings.defaultAPIURL);
+		}
+
 		/** @type {Response|null} */
 		let oRes = null;
 		fetch(`${apiurl}${url}`, options)
@@ -65,9 +80,11 @@ function call(method, url, opts) {
 							} )
 						}
 
-						case 'text': data.text().then( txt => reject(new Error(txt))  );
+						case 'text': data.text().then(txt => {
+							data.data = txt;
+							reject(data)
+						});
 						return null;
-
 				}
 
 			})
@@ -92,31 +109,8 @@ function call(method, url, opts) {
 
 
 
-export function GET(url, opts={}) {
-	return call("get", url, opts);
-}
-
-export function DELETE(url, opts={}) {
-	return call("delete", url, opts);
-}
-
-export function POST(url, body, opts={}) {
-	return call("post", url, {...opts, body})
-}
-
-export function addResponseListener(httpStatus, handler) {
-	if(typeof(handler) != 'function') return;
-	const s = parseInt(httpStatus);
-	if(!statusEventHandlers[s]) statusEventHandlers[s] = [];
-	statusEventHandlers[s].push(handler);
-}
-
-export function removeResponseListener(httpStatus, handler) {
-	const s = parseInt(httpStatus);
-	if(!statusEventHandlers[s]) return;
-
-	statusEventHandlers[s] = statusEventHandlers[s].filter((h) => h !== handler);
-}
-
+export function GET(url, opts={}) 		 { return call("get", url, opts); }
+export function DELETE(url, opts={}) 	 { return call("delete", url, opts); }
+export function POST(url, body, opts={}) { return call("post", url, {...opts, body}) }
 
 export default { GET, POST, DELETE, addResponseListener, removeResponseListener }

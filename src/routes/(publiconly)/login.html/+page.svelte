@@ -26,36 +26,40 @@
 </section>
 
 <script>
-	import {api, username, loggedin, loginPageErrorMessage, user_modules } from '$lib/stores.js';
+	import {api_token, api_url, username, loggedin, loginPageErrorMessage, user_modules } from '$lib/stores.js';
     import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
     import ToastMsg from '$lib/modules/ToastMsg';
     import {htmlentities} from '$lib/utils';
+    import { POST } from '$lib/api';
 
     let user = "";
     let pass = "";
 
     const onSubmit = async () => {
-        let response = await fetch(`${$api.url}/login`, {
-            method: "post",
-            headers: { 'content-type': 'application/x-www-form-urlencoded' },
-            body: (new URLSearchParams({user, pass})).toString(),
-        })
 
-        if(response.status == 200) {
-            let jsonRes = await response.json();
-            $api = { 
-                url: jsonRes['apiurl'],
-                token: jsonRes['token']
-            };
+        try {
+            let response = await POST(
+                '/login', 
+                (new URLSearchParams({user, pass})).toString(), 
+                {
+                    ignore404: true,
+                    expect: 'json',
+                    headers: { 'content-type': 'application/x-www-form-urlencoded' }
+                }
+            );
+
+            let jsonRes = response.data;
+            $api_url = jsonRes['apiurl'];
+            $api_token = jsonRes['token'];
             $username = jsonRes['displayname'];
             $loggedin = true;
             $user_modules = jsonRes['modules'];
             goto("/") 
-
         }
-        else {
-            const msg = await response.text();
+        catch(response) {
+            const msg = response.data; 
+
             switch(response.status) {
                 case 0:break;
                 case 400:
@@ -71,6 +75,8 @@
                     ToastMsg.toast(`${response.status}: ${msg}`, "var(--toast-red)", 2000);
             }
         }
+
+        return;
     }
 </script>
 

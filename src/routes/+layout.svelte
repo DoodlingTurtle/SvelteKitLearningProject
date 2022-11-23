@@ -20,9 +20,9 @@
     import { cleanStore, loginPageErrorMessage } from '$lib/stores';
 
     //======================================================================
-    // Logout if server cant find an Answer
+    // Logout if server can't find an Answer
     //======================================================================
-    API.addResponseListener(404, async (res: any) => {
+    API.addResponseListener(403, async (res: any) => {
         await cleanStore();
         $loginPageErrorMessage = "Your Session has been closed. Reasons can be:\n" 
             + "- your session was closed because you deleted it from the Settings page\n"
