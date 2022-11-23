@@ -3,12 +3,15 @@
     import Modal from "./Modal.svelte";
 
     const on = createEventDispatcher();
+
     export let name = "";
     export let labelYes = "OK";
     export let labelNo = "No, I did not mean to";
 
     /** @type {string|undefined} */
     export let confirmMsg;
+
+    let dialogOpen = false;
 
     const onClick = () => {
         if(confirmMsg) 
@@ -17,7 +20,6 @@
             on("click", name)
     }
 
-    let dialogOpen = false;
 
 </script>
 
