@@ -15,10 +15,17 @@ STORE.api.subscribe(obj => {
 
 function call(method, url, opts) {
 	const resType = opts.expect || "";
-	const ignore = { 404: opts.ignore404 ? true : false };
+	const ignore = {};
+
+	Object.keys(opts).forEach((k) => {
+		const ma = k.match(/^ignore([0-9]+)$/);
+		if(ma) {
+			ignore[ma[1]] = true;
+			delete opts[k];
+		}
+	})
 
 	if (opts.expect) delete opts.expect;
-	if (opts.ignore404) delete opts.ignore404;
 
 	const options = {
 		headers: {},
@@ -38,12 +45,7 @@ function call(method, url, opts) {
 			.then(data => {
 
 				switch(data.status) {
-					case 400: 
-					case 500: 
-						case 'text': data.text().then( txt => reject(new Error(txt))  );
-						return null;
-
-					default:
+					case 200:
 						oRes = data;
 						switch (resType) {
 							case 'json': return data.json();
@@ -54,6 +56,18 @@ function call(method, url, opts) {
 							default: return Promise.resolve(undefined)
 						}
 						break;
+
+					default:
+						console.log("unexpected response", data);
+						if(!ignore[data.status] && statusEventHandlers[data.status]) {
+							statusEventHandlers[data.status].forEach( (h) => {
+								h(data);
+							} )
+						}
+
+						case 'text': data.text().then( txt => reject(new Error(txt))  );
+						return null;
+
 				}
 
 			})
@@ -64,6 +78,7 @@ function call(method, url, opts) {
 				}
 			})
 			.catch( (...args) => {
+				console.log("error during fetch", args);
 				if(oRes && oRes.status && !ignore[oRes.status] && statusEventHandlers[oRes.status]) {
 					statusEventHandlers[oRes.status].forEach( (h) => {
 						h(oRes);
@@ -85,6 +100,10 @@ export function DELETE(url, opts={}) {
 	return call("delete", url, opts);
 }
 
+export function POST(url, body, opts={}) {
+	return call("post", url, {...opts, body})
+}
+
 export function addResponseListener(httpStatus, handler) {
 	if(typeof(handler) != 'function') return;
 	const s = parseInt(httpStatus);
@@ -100,4 +119,4 @@ export function removeResponseListener(httpStatus, handler) {
 }
 
 
-export default { GET, DELETE, addResponseListener, removeResponseListener }
+export default { GET, POST, DELETE, addResponseListener, removeResponseListener }
