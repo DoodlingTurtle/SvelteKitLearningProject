@@ -9,7 +9,8 @@
     /** @type {HTMLElement}*/
     let me;
 
-    onMount(()=>{ document.body.appendChild(me); })
+    onMount(  () => { document.body.appendChild(me); open = true; })
+    onDestroy(() => { document.body.removeChild(me); open = false;})
 
     $: if(open) 
         document.body.style.overflow = "hidden";
@@ -49,7 +50,8 @@
 
         .modalContent {
             flex-grow: 0;
-            flex-shrink: 0;
+            flex-shrink: 1;
+            margin: 1rem;
             padding: var(--border-rad);
             border-radius: var(--border-rad);
 
