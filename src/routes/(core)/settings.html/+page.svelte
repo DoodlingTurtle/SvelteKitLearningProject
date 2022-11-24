@@ -31,10 +31,6 @@
         passRep: ""
     })
 
-    function onPWChange(ev) {
-        alert("TODO Implement");
-    }
-
 
 </script>
 
@@ -59,7 +55,7 @@
             }}
         
             components={[
-                {component: MyAccount,   style: "grid-area: ma", props: {'onclick': onPWChange }},
+                {component: MyAccount,   style: "grid-area: ma"  },
                 {component: Privileges,  style: "grid-area: mo"  },
                 {component: Sessions,    style: "grid-area: se"  },
             ]} 

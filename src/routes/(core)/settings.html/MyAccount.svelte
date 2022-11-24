@@ -2,11 +2,42 @@
 <script>
     import { getContext } from "svelte";
     import FoldContainer from "$lib/components/FoldContainer.svelte";
+    import { slide } from "svelte/transition";
     
     export let data = {}
-    export let onclick=() => {}
 
     let context = getContext("settingsfrm");
+
+    let sPasswordError = "";
+    let sPasswordMessage = "";
+
+    $: bPasswordError = sPasswordError.trim() != "";
+    $: bPasswordMessage = bPasswordError || sPasswordMessage.trim() != "";
+    $: if(bPasswordError) sPasswordMessage = sPasswordError;
+
+    $: console.log(bPasswordMessage, sPasswordMessage, bPasswordError, sPasswordError);
+
+    const onclick = () => {
+        let p1 = context.pass;
+        let p2 = context.passRep;
+
+        sPasswordError = "";
+
+        if(p1.length != p1.trim().length) {
+            sPasswordError = "password cant have whitepaces at the start or end";
+            return;
+        }
+
+        if(p1 != p2) {
+            sPasswordError = "Password and its Repeat do not match";
+            return;
+        }
+
+        // TODO: Tell API to start Password change process.
+
+        sPasswordMessage = "To finish the change, please enter the Code from the E-Mail we send you.";
+
+    }
 
 </script>
     
@@ -14,13 +45,21 @@
     <h2 slot="legend" class="btn {context.myAccountFold ? 'active' : ''}">Settings:</h2>
 
     <fieldset slot="content" class="frm-myaccount">
-        <p class="mt-1 mb-3 mt-sm-1 mb-sm-3"    >Here you can change anything in regards to your Account and the App</p>
-        <b class="                      ">Login:</b>          <span class="                 ">{data.login}</span>
-        <b class="mt-3 mt-xs-2 mt-sm-1  ">E-Mail:</b>         <span class="mt-xs-2 mt-sm-1  ">{data["email"]}</span>
-        <b class="mt-3 mt-xs-2 mt-sm-1  ">Profile:</b>        <span class="mt-xs-2 mt-sm-1  ">{data["profilename"]}</span>
-        <b class="mt-4         mt-sm-2  ">Password:</b>       <span class="mt-xs-4 mt-sm-2  "><input type="password" bind:value={context.pass} /></span>
-        <b class="mt-2         mt-sm-1  ">Password Repeat:</b><span class="mt-xs-2 mt-sm-1  "><input type="password" bind:value={context.passRep} /></span>
-        <span class="mt-2      mt-sm-1  "><button class="btn" on:click={onclick} >change password</button></span>
+        <p class="mt-1 mb-3 mt-sm-1 mb-sm-3"    >
+            Here you can change anything in regards to your Account and the App
+            {#if bPasswordMessage}
+                <b transition:slide style:color={bPasswordError ? 'red' : 'green'} style="display: block" class="mb-4 mt-4">{sPasswordMessage}</b>
+            {/if}
+        </p>
+        <b class="                    "               >Login:</b>          <span class="                 ">{data.login}</span>
+        <b class="mt-3 mt-xs-2 mt-sm-1"               >E-Mail:</b>         <span class="mt-xs-2 mt-sm-1  ">{data["email"]}</span>
+        <b class="mt-3 mt-xs-2 mt-sm-1"               >Profile:</b>        <span class="mt-xs-2 mt-sm-1  ">{data["profilename"]}</span>
+        <b class="mt-4         mt-sm-2" 
+            style:color={bPasswordError ? 'red' : ''} >Password:</b>       <span class="mt-xs-4 mt-sm-2  "><input type="password" bind:value={context.pass} /></span>
+        <b class="mt-2         mt-sm-1" 
+            style:color={bPasswordError ? 'red' : ''} >Password Repeat:</b><span class="mt-xs-2 mt-sm-1  "><input type="password" bind:value={context.passRep} /></span>
+
+        <span class="mt-2      mt-sm-1" ><button class="btn" on:click={onclick} >change password</button></span>
     </fieldset>
 </FoldContainer>
 
