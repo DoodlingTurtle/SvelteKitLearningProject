@@ -1,7 +1,7 @@
 <script>
     import { fade } from 'svelte/transition';
     import { page } from '$app/stores';
-    import { GET  } from "$lib/api";
+    import { GET  } from "$lib/modules/API";
 
     import PageTitle from "$lib/components/PageTitle.svelte";
     import Loader from "$lib/components/Loader.svelte";

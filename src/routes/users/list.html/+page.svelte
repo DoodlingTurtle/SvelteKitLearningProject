@@ -1,39 +1,43 @@
-<script lang="ts">
+<script>
     import PageTitle from "$lib/components/PageTitle.svelte";
     import BtnDelete from "$lib/components/BtnDelete.svelte";
 
     import { fade, slide } from "svelte/transition";
     import { flip } from "svelte/animate"
-    import { DELETE, GET } from '$lib/api'
+    import { DELETE, GET } from '$lib/modules/API'
 
-    import { htmlentities } from '$lib/utils';
+    import { htmlentities } from '$lib/modules/Utils';
     import Loader from "$lib/components/Loader.svelte";
     import { onMount } from "svelte";
+    import { toast } from '$lib/modules/ToastMsg'
 
-    interface ListEntry {
-        id:number,
-        login:string,
-        email:string,
-        profilename:string,
+    /** @typedef ListEntry
+     *  @property {number} id 
+     *  @property {string} login 
+     *  @property {string} email 
+     *  @property {string} profilename 
+     * 
+     *  @property {string} rights 
+     * 
+     *  @property {string} created 
+     *  @property {string} updated 
+     */
 
-        rights: string,
-
-        created: string,
-        updated: string
-    }
-
-    let userList :ListEntry[] = [];
+    /** @type {ListEntry[]} */
+    let userList = [];
 
     let actionPromise = Promise.resolve();
 
+    const actionFail = (err) => toast(err.data, 'var(--toast-red)', 4000);
+
     onMount(() => {
-        actionPromise = GET("/users", {expect: 'json'}).then( res => userList = res.data );
+        actionPromise = GET("/users", {expect: 'json'}).then( res => userList = res.data ).catch(actionFail);
     })
 
-    const onDelete = (userID: number) => {
+    const onDelete = (userID) => {
         actionPromise = DELETE(`/user/${userID}`).then( () => {
-            actionPromise = GET("/users", {expect: 'json'}).then( res => userList = res.data );
-        })
+            actionPromise = GET("/users", {expect: 'json'}).then( res => userList = res.data ).catch(actionFail);
+        }).then(() => toast("User removed", 'var(--toast-green)', 2000)).catch(actionFail);
     }
 </script>
 
@@ -44,11 +48,9 @@
     <section class="users-list">
 
     {#await actionPromise}
-        <Loader />
-    {:catch err}
-        <article class="errormsg" in:slide>
-            {err.data}
-        </article>
+        {#if userList.length == 0}
+            <Loader />
+        {/if}
     {/await}
 
     {#each userList as entry (entry.id)}
@@ -94,10 +96,6 @@
 
 <style lang="scss">
     @import "media.sass";
-
-    article.errormsg {
-        color: red;
-    } 
 
     .users-list article {
         grid-gap: .5rem;

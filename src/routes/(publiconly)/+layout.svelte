@@ -1,6 +1,6 @@
 <script>
     import RedirectGate from "$lib/components/RedirectGate.svelte";
-    import { loggedin } from "$lib/stores";
+    import { loggedin } from "$lib/modules/Stores";
 
 </script>
 <RedirectGate

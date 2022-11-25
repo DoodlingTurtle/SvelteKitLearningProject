@@ -1,6 +1,6 @@
-<script lang="ts">
+<script >
     import RedirectGate from '$lib/components/RedirectGate.svelte';
-    import { user_modules } from '$lib/stores';
+    import { user_modules } from '$lib/modules/Stores';
 </script>
 
 <RedirectGate 

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {api_token, api_url} from '$lib/stores'
+import {api_token, api_url} from '$lib/modules/Stores'
 
 const statusEventHandlers = { }
 export function addResponseListener(httpStatus, handler) {

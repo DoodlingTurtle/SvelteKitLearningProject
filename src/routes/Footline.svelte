@@ -1,3 +1,7 @@
+<script>
+    import { user_modules } from "../lib/modules/Stores";
+</script>
+
 <footer id="mainFooterline">
     {#if $user_modules.edit_user}
       <a href="/users/list.html" class="fa fa-solid fa-user">&nbsp;</a>
@@ -57,9 +61,3 @@ footer {
 
 }
 </style>
-
-<script>
-    import { user_modules } from "../lib/stores";
-
-
-</script>

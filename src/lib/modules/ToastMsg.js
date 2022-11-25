@@ -16,7 +16,7 @@ const aToasts = [];
 
 
 /** @typedef EventHandlerList 
- * @property {((ToastMessage) => void)[]} show
+ * @property {((arg0: ToastMessage) => void)[]} show
  * @property {(() => void)[]} hide
 */
 
@@ -64,11 +64,11 @@ function nextToast(fnc) {
 
 /**
  * @param {'show'|'hide'} event
- * @param {(...any) => void} fnc
+ * @param {(() => void) | ((arg0: ToastMessage) => void)} fnc
  */
 function addEventListener(event, fnc) {
 
-	/** @type {Array.<(...any) => void> | undefined} */
+	/** @type {((...arg0: any[]) => void)[] | undefined} */
 	let lst = eventListeners[event];
 
 	if(lst) {
@@ -83,7 +83,7 @@ function addEventListener(event, fnc) {
 /**
  * @param {string} msg
  */
-async function toast(msg, color="#ff0000", time=5000, showInstantly=true) {
+export async function toast(msg, color="#ff0000", time=5000, showInstantly=true) {
 	let prom = onNewToastFnc(new ToastMessage(msg, color, time)).then( flush );
 	if (showInstantly)
 		return prom.then(flush)
@@ -96,6 +96,7 @@ async function syncToasts() {
 	let t = await nextToastFnc();
 	if(t) {
 
+		// @ts-ignore
 		eventListeners.show.forEach( (fnc) => fnc(t) )
 
 		timeout = window.setTimeout( () => {

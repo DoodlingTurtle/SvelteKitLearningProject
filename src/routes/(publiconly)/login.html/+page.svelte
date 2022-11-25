@@ -26,12 +26,12 @@
 </section>
 
 <script>
-	import {api_token, api_url, username, loggedin, loginPageErrorMessage, user_modules } from '$lib/stores.js';
+	import {api_token, api_url, username, loggedin, loginPageErrorMessage, user_modules } from '$lib/modules/Stores';
     import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
     import ToastMsg from '$lib/modules/ToastMsg';
-    import {htmlentities} from '$lib/utils';
-    import { POST } from '$lib/api';
+    import {htmlentities} from '$lib/modules/Utils';
+    import { POST } from '$lib/modules/API';
 
     let user = "";
     let pass = "";
@@ -55,6 +55,7 @@
             $username = jsonRes['displayname'];
             $loggedin = true;
             $user_modules = jsonRes['modules'];
+            ToastMsg.toast("Welcome back", "var(--toast-green)", 2000)
             goto("/") 
         }
         catch(response) {

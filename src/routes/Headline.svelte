@@ -1,6 +1,6 @@
 <script>
     import BtnLogout from '$lib/components/BtnLogout.svelte';
-    import { loggedin, menuOpen } from '$lib/stores';
+    import { loggedin, menuOpen } from '$lib/modules/Stores';
     import NavToggle from '$lib/components/NavToggle.svelte';
 
     import '$lib/vendor/font-awesome/css/all.min.css';

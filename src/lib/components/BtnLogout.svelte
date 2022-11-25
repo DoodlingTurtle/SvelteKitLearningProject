@@ -1,8 +1,8 @@
 <script>
     import {goto} from '$app/navigation';
-    import { cleanStore, loggedin } from '$lib/stores';
+    import { cleanStore, loggedin } from '$lib/modules/Stores';
     import Modal from './Modal.svelte';
-    import {DELETE} from "$lib/api.js";
+    import {DELETE} from "$lib/modules/API";
 
     export let cssClass = "";
 

@@ -33,24 +33,26 @@
     </fieldset>
 </FoldContainer>
 
-<script lang="ts">
+<script >
     import { getContext } from "svelte";
     import { flip } from 'svelte/animate';
 
-    import { GET, DELETE } from "$lib/api.js";
+    import { GET, DELETE } from "$lib/modules/API";
 
     import BtnDelete from "$lib/components/BtnDelete.svelte";
     import FoldContainer from "$lib/components/FoldContainer.svelte";
     import Loader from "$lib/components/Loader.svelte";
 
-    import { formatDateTime } from "$lib/utils";
+    import { formatDateTime } from "$lib/modules/Utils";
 
-    interface ContextObj  {
-        sessionsFold: boolean
-    }
+    /** @typedef ContextObj
+     * @property {boolean} sessionFold 
+     */
 
-    let context:ContextObj = getContext("settingsfrm");
-    let sessions:any[]= [];
+     /** @type {ContextObj} */
+    let context = getContext("settingsfrm");
+
+    let sessions = [];
     export const data ={};
 
     let sessionsPromise = GET("/sessions", {expect: 'json'})
@@ -59,7 +61,10 @@
             return Promise.resolve();
         });
 
-    async function dropSession(sessID:string) {
+    /**
+     * @param {string} sessID
+     */
+    async function dropSession(sessID) {
         await DELETE(`/session/${sessID}`);
         sessions = sessions.filter((s) => s.id != sessID);
     }

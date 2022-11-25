@@ -1,5 +1,5 @@
 <script>
-    import { menuOpen, user_modules } from "$lib/stores";
+    import { menuOpen, user_modules } from "$lib/modules/Stores";
     import NavToggle from "$lib/components/NavToggle.svelte";
 
     const leave = () => ($menuOpen = false);

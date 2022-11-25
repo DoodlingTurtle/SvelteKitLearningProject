@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import { browser } from '$app/environment';
     import { goto } from '$app/navigation';
-    import { cleanStore, loginPageErrorMessage, loggedin } from "$lib/stores";
+    import { cleanStore, loginPageErrorMessage, loggedin } from "$lib/modules/Stores";
 
     export let passcondition:boolean;
     export let logout:boolean=true;
