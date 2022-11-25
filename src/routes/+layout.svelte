@@ -18,6 +18,7 @@
     import API from '$lib/api';
     import { goto } from '$app/navigation';
     import { cleanStore, loginPageErrorMessage } from '$lib/stores';
+    import ToastMsg from './ToastMsg.svelte';
 
     //======================================================================
     // Logout if server can't find an Answer
@@ -42,3 +43,5 @@
 
 <Headline />
 <Footline />
+
+<ToastMsg />

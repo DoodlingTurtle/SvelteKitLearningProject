@@ -1,13 +1,12 @@
 <script>
-    import ToastMsg from "../modules/ToastMsg";
+    import ToastMsg from "$lib/modules/ToastMsg";
     import { fade, fly } from 'svelte/transition';
 
     let visible = false;
     let backgroundColor = 'gray';
     let msg = "Toast Msg component"
 
-    ToastMsg.addEventListener("show", (ev) => {
-        const toast = ev.detail;
+    ToastMsg.addEventListener("show", (toast) => {
         msg = toast.msg;
         backgroundColor = toast.color;
         visible = true;

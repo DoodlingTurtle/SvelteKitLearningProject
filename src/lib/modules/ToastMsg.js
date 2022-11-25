@@ -1,6 +1,3 @@
-
-
-
 class ToastMessage {
 	/**
 	 * @param {string} msg
@@ -14,10 +11,23 @@ class ToastMessage {
 	}
 }
 
-/** @constant {Array.<ToastMessage>} aToasts  */
+/** @type {ToastMessage[]} */
 const aToasts = [];
+
+
+/** @typedef EventHandlerList 
+ * @property {((ToastMessage) => void)[]} show
+ * @property {(() => void)[]} hide
+*/
+
+
+/** @type {EventHandlerList} */
+const eventListeners = { show: [], hide: []}
+
+/** @type {number} */
 let timeout;
-let toastContainer;
+
+
 
 
 /** @param {ToastMessage} t */
@@ -26,11 +36,8 @@ let onNewToastFnc = function(t) {
 	return Promise.resolve();
 }
 
-/** @returns {Promise.<ToastMessage>} */
+/** @returns {Promise.<ToastMessage|undefined>} */
 let nextToastFnc = function() { return Promise.resolve(aToasts.shift()); }
-
-/** @return void */
-let onToastFnc = function() { console.warn("ToastMsgOnToast") }
 
 
 
@@ -47,7 +54,7 @@ function onNewToast(fnc) {
 
 /**
  * @callback nextToastCallback
- * @return {Promise.<ToastMessage>}
+ * @return {Promise.<ToastMessage|undefined>}
  */
 /** @param {nextToastCallback} fnc */
 function nextToast(fnc) {
@@ -57,13 +64,25 @@ function nextToast(fnc) {
 
 /**
  * @param {'show'|'hide'} event
+ * @param {(...any) => void} fnc
  */
-function addEventListener(event, fnc, opts) {
-	document.addEventListener("ToastMsg."+event, fnc, opts);
-	return () => document.removeEventListener("ToastMsg."+event, fnc);
+function addEventListener(event, fnc) {
+
+	/** @type {Array.<(...any) => void> | undefined} */
+	let lst = eventListeners[event];
+
+	if(lst) {
+		lst.push(fnc);
+		return () =>  lst = lst ? lst.filter( (e) => e != fnc ) : lst;
+	}
+
+	return () => false;
 }
 
 
+/**
+ * @param {string} msg
+ */
 async function toast(msg, color="#ff0000", time=5000, showInstantly=true) {
 	let prom = onNewToastFnc(new ToastMessage(msg, color, time)).then( flush );
 	if (showInstantly)
@@ -77,12 +96,10 @@ async function syncToasts() {
 	let t = await nextToastFnc();
 	if(t) {
 
-		const ev = new CustomEvent("ToastMsg.show", { detail: t });
-		document.dispatchEvent(ev);
+		eventListeners.show.forEach( (fnc) => fnc(t) )
 
 		timeout = window.setTimeout( () => {
-			const ev = new Event("ToastMsg.hide");
-			document.dispatchEvent(ev);
+			eventListeners.hide.forEach( (fnc) => fnc() )
 
 			timeout = 0;	
 			window.setTimeout( syncToasts, 500 );
