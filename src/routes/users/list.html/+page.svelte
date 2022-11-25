@@ -47,7 +47,7 @@
         <Loader />
     {:catch err}
         <article class="errormsg" in:slide>
-            {err}
+            {err.data}
         </article>
     {/await}
 
