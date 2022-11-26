@@ -107,10 +107,54 @@ function call(method, url, opts) {
 	});
 }
 
+function contentTypePreProcess(opts={}, body=null) {
 
+	const optOverride = {};
+
+	// extract headers from opts
+	const optHeaders = opts.headers || {};
+	delete opts.headers;
+
+	// extract contenttype from header
+	let contentTypeHeader = "";
+	let contentType = "";
+
+	Object.keys(optHeaders).map( h => {
+		switch(h.toLowerCase()) {
+			case 'content-type':
+				contentTypeHeader = h;
+				contentType = optHeaders[h].toLowerCase();
+				delete optHeaders[h];
+				break;
+		}
+	})
+
+	if(!contentTypeHeader.trim()) 	contentTypeHeader = "content-type";
+
+	switch(contentType) {
+		case 'application/json':
+			optOverride.body = JSON.stringify(body);			
+			break;
+
+		default:
+			optOverride.body = (new URLSearchParams(body)).toString();
+			optHeaders[contentTypeHeader] = 'application/x-www-form-urlencoded';
+	}
+
+	return {
+		...opts, 
+		...optOverride,
+		'headers': optHeaders	
+	}
+}
 
 export function GET(url, opts={}) 		 { return call("get", url, opts); }
 export function DELETE(url, opts={}) 	 { return call("delete", url, opts); }
-export function POST(url, body, opts={}) { return call("post", url, {...opts, body}) }
+export function POST(url, body, opts={}) { 
+	return call("post", url, contentTypePreProcess(opts, body) ) 
+}
+export function PUT(url, body, opts={}) { 
+	return call("put", url, contentTypePreProcess(opts, body) ) 
+}
 
-export default { GET, POST, DELETE, addResponseListener, removeResponseListener }
+export default { GET, POST, PUT, DELETE, addResponseListener, removeResponseListener }
