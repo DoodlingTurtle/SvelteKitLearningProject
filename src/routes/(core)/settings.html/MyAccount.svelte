@@ -3,6 +3,9 @@
     import { getContext } from "svelte";
     import FoldContainer from "$lib/components/FoldContainer.svelte";
     import { slide } from "svelte/transition";
+
+    import { POST } from '$lib/modules/API';
+    import { toast } from '$lib/modules/ToastMsg';
     
     export let data = {}
 
@@ -15,7 +18,13 @@
     $: bPasswordMessage = bPasswordError || sPasswordMessage.trim() != "";
     $: if(bPasswordError) sPasswordMessage = sPasswordError;
 
-    $: console.log(bPasswordMessage, sPasswordMessage, bPasswordError, sPasswordError);
+    const onConfirm = () => {
+
+    }
+
+    const onCancel = () => {
+
+    }
 
     const onclick = () => {
         let p1 = context.pass;
@@ -34,8 +43,11 @@
         }
 
         // TODO: Tell API to start Password change process.
-
-        sPasswordMessage = "To finish the change, please enter the Code from the E-Mail we send you.";
+        POST("/passwordchange", {'pass': p1}, {expect: 'json'})
+            .then(res => {
+                sPasswordMessage = "To finish the change, please enter the Code from the E-Mail we send you.";
+                context.pwConfirm = true;
+            }).catch( err => toast(`password change request failed: ${err.data}`, 'var(--toast-red)', 5000) )
 
     }
 
@@ -54,12 +66,26 @@
         <b class="                    "               >Login:</b>          <span class="                 ">{data.login}</span>
         <b class="mt-3 mt-xs-2 mt-sm-1"               >E-Mail:</b>         <span class="mt-xs-2 mt-sm-1  ">{data["email"]}</span>
         <b class="mt-3 mt-xs-2 mt-sm-1"               >Profile:</b>        <span class="mt-xs-2 mt-sm-1  ">{data["profilename"]}</span>
-        <b class="mt-4         mt-sm-2" 
-            style:color={bPasswordError ? 'red' : ''} >Password:</b>       <span class="mt-xs-4 mt-sm-2  "><input type="password" bind:value={context.pass} /></span>
-        <b class="mt-2         mt-sm-1" 
-            style:color={bPasswordError ? 'red' : ''} >Password Repeat:</b><span class="mt-xs-2 mt-sm-1  "><input type="password" bind:value={context.passRep} /></span>
 
-        <span class="mt-2      mt-sm-1" ><button class="btn" on:click={onclick} >change password</button></span>
+       {#if context.pwConfirm} 
+            <span class="mt-4 mt-sm-2"></span>  
+            <span class="mt-4 mt-sm-2">Please enter the code, we send to your E-Email Adress</span>
+
+            <span class="mt-4 mt-sm-2"></span>  
+            <span class="mt-4 mt-sm-2"><input type="text" bind:value={context.pwConfirmCode}/></span>
+
+            <span class="mt-2      mt-sm-1" >
+                <button class="btn" on:click={onConfirm} >confirm</button>
+                <button class="btn" on:click={onCancel} >cancel change</button>
+            </span>
+       {:else}
+            <b class="mt-4         mt-sm-2" 
+                style:color={bPasswordError ? 'red' : ''} >Password:</b>       <span class="mt-xs-4 mt-sm-2  "><input type="password" bind:value={context.pass} /></span>
+            <b class="mt-2         mt-sm-1" 
+                style:color={bPasswordError ? 'red' : ''} >Password Repeat:</b><span class="mt-xs-2 mt-sm-1  "><input type="password" bind:value={context.passRep} /></span>
+
+            <span class="mt-2      mt-sm-1" ><button class="btn" on:click={onclick} >change password</button></span>
+       {/if}
     </fieldset>
 </FoldContainer>
 

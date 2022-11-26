@@ -25,10 +25,15 @@
     //=========================================================================
     let context = setContext("settingsfrm", {
         myAccountFold: true, 
+        pwConfirm: false,
+        pwConfirmCode: "",
+
+
         modulesFold: true, 
         sessionsFold: true, 
         pass: "", 
-        passRep: ""
+        passRep: "",
+    
     })
 
 
