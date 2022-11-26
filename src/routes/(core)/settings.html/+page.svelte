@@ -4,7 +4,6 @@
 
     import PageTitle from '$lib/components/PageTitle.svelte';
     import Loader from "$lib/components/Loader.svelte";
-    import FlowyGrid from '$lib/components/FlowyGrid.svelte';
 
     import MyAccount from './MyAccount.svelte';
     import Privileges from './Privileges.svelte';
@@ -47,28 +46,13 @@
     {#await fetchPromise}
         <Loader />
     {:then data}
-        <FlowyGrid 
-            layouts = {{
-                /* Default Layout (Mobile first) */
-                ""                  :    "grid-template-areas: 'ma' 'mo' 'se' ; grid-template-columns: 1fr",
-        
-                /* Layout changes if the screens min with is 992px */
-                "(min-width: 992px)":    "grid-template-areas: 'ma mo' 'se se'; grid-template-columns: 1fr 1fr;",
 
-                /* Layout layout changes if the screens min with is 1200 */        
-                "(min-width: 1200px)":   "grid-template-areas: 'ma mo' 'se mo'; grid-template-columns: 2fr 1fr; grid-template-rows: 0fr 1fr",
-            }}
-        
-            components={[
-                {component: MyAccount,   style: "grid-area: ma"  },
-                {component: Privileges,  style: "grid-area: mo"  },
-                {component: Sessions,    style: "grid-area: se"  },
-            ]} 
-            
-            props={{data}} 
-        
-        />
-    
+        <div class="frm">
+            <span style="grid-area: ma"><MyAccount  {data} /></span>
+            <span style="grid-area: mo"><Privileges {data} /></span>
+            <span style="grid-area: se"><Sessions   {data} /></span>
+        </div>
+
     {:catch error}
         Error while loading, you may need to log out and in again
     {/await}
@@ -78,7 +62,24 @@
     @import "colors.sass";
     @import "media.sass";
 
-    .page-settings :global(.flowygrid-layout) {
+    DIV.frm {
+        display: grid;
+        grid-template-areas: 'ma' 'mo' 'se' ; 
+        grid-template-columns: 1fr;
+
+        @media(min-width: 992px) {
+            grid-template-areas: 'ma mo' 'se se'; 
+            grid-template-columns: 1fr 1fr;
+        }
+
+        @media(min-width: 1200px) {
+            grid-template-areas: 'ma mo' 'se mo'; 
+            grid-template-columns: 2fr 1fr; 
+            grid-template-rows: 0fr 1fr;
+        }
+    }
+
+    .page-settings DIV.frm {
         display: grid;
         grid-gap: .5rem;
 
