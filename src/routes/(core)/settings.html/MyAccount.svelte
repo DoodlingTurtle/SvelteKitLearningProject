@@ -4,7 +4,7 @@
     import FoldContainer from "$lib/components/FoldContainer.svelte";
     import { slide } from "svelte/transition";
 
-    import { POST } from '$lib/modules/API';
+    import { POST, DELETE } from '$lib/modules/API';
     import { toast } from '$lib/modules/ToastMsg';
     
     export let data = {}
@@ -13,6 +13,12 @@
 
     let sPasswordError = "";
     let sPasswordMessage = "";
+
+    $: context.pwConfirm = data.pwchange=="1"
+
+    $: sPasswordMessage = context.pwConfirm 
+        ? "To finish the change, please enter the Code from the E-Mail we send you."
+        : "";
 
     $: bPasswordError = sPasswordError.trim() != "";
     $: bPasswordMessage = bPasswordError || sPasswordMessage.trim() != "";
@@ -23,7 +29,18 @@
     }
 
     const onCancel = () => {
-
+        DELETE("/passwordchange").then(res => {
+            switch(res.status) {
+                default: 
+                    console.warn("unexpected response status: ", res);
+                case 205:  
+                    context.pwConfirm = false;
+            }
+        })
+        .catch( err => {
+            toast("failed to cancel password change " + err.data, 'var(--toast-red)', 6000)
+            console.error(err);
+        } )
     }
 
     const onclick = () => {
@@ -45,7 +62,6 @@
         // TODO: Tell API to start Password change process.
         POST("/passwordchange", {'pass': p1}, {expect: 'json'})
             .then(res => {
-                sPasswordMessage = "To finish the change, please enter the Code from the E-Mail we send you.";
                 context.pwConfirm = true;
             }).catch( err => toast(`password change request failed: ${err.data}`, 'var(--toast-red)', 5000) )
 
@@ -68,11 +84,8 @@
         <b class="mt-3 mt-xs-2 mt-sm-1"               >Profile:</b>        <span class="mt-xs-2 mt-sm-1  ">{data["profilename"]}</span>
 
        {#if context.pwConfirm} 
-            <span class="mt-4 mt-sm-2"></span>  
             <span class="mt-4 mt-sm-2">Please enter the code, we send to your E-Email Adress</span>
-
-            <span class="mt-4 mt-sm-2"></span>  
-            <span class="mt-4 mt-sm-2"><input type="text" bind:value={context.pwConfirmCode}/></span>
+            <span class="mt-2 mt-sm-2"><input type="text" bind:value={context.pwConfirmCode}/></span>
 
             <span class="mt-2      mt-sm-1" >
                 <button class="btn" on:click={onConfirm} >confirm</button>

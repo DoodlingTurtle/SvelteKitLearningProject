@@ -60,7 +60,12 @@ function call(method, url, opts) {
 			.then(data => {
 
 				switch(data.status) {
-					case 200:
+					case 200:	/* OK */
+					case 201:	/* Created */
+					case 202:	/* Accepted */
+					case 204:	/* No Content */
+					case 205:	/* Reset Content */
+					case 206:	/* Partial Content */
 						oRes = data;
 						switch (resType) {
 							case 'json': return data.json();

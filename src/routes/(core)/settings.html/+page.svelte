@@ -15,12 +15,10 @@
     //=========================================================================
     // Fetch Data for the Form
     //=========================================================================
-    let fetchPromise = GET("/account", { expect: "json" }).then((res) => Promise.resolve(res.data));
+    let fetchPromise = GET("/account", { expect: "json" }).then( res => res.data );
 
     //=========================================================================
     // Create Context (shared with all components) 
-    // Required, since layout changes cause the form to be destroyed and 
-    // Rebuild (The only way I know how to trigger the animations)
     //=========================================================================
     let context = setContext("settingsfrm", {
         myAccountFold: true, 
@@ -32,7 +30,6 @@
         sessionsFold: true, 
         pass: "", 
         passRep: "",
-    
     })
 
 
