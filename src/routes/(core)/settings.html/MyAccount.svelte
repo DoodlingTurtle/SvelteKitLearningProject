@@ -4,7 +4,8 @@
     import FoldContainer from "$lib/components/FoldContainer.svelte";
     import { slide } from "svelte/transition";
 
-    import { POST, DELETE } from '$lib/modules/API';
+    import { POST, PATCH, DELETE } from '$lib/modules/API';
+    import { empty } from '$lib/modules/Utils';
     import { toast } from '$lib/modules/ToastMsg';
     
     export let data = {}
@@ -25,6 +26,25 @@
     $: if(bPasswordError) sPasswordMessage = sPasswordError;
 
     const onConfirm = () => {
+
+        if(empty(context.pwConfirmOldPW)) {
+            toast("please fill in the old password", 'var(--toast-red)', 4000)
+            return;
+        }
+
+        if(empty(context.pwConfirmCode)) {
+            toast("please enter the confirm code", 'var(--toast-red)', 4000)
+            return;
+        }
+
+        PATCH("/passwordchange", {oldpw: context.pwConfirmOldPW, code: context.pwConfirmCode })
+            .then( res => {
+                context.pwConfirm = false;
+            } )
+            .catch( err => {
+                toast("failed to confirm password change " + err.data, 'var(--toast-red)', 6000)
+                console.error(err);
+            } )
 
     }
 
@@ -59,9 +79,11 @@
             return;
         }
 
-        // TODO: Tell API to start Password change process.
         POST("/passwordchange", {'pass': p1}, {expect: 'json'})
             .then(res => {
+                context.pass = "";
+                context.passRep = "";
+                data.pwchange = "1";
                 context.pwConfirm = true;
             }).catch( err => toast(`password change request failed: ${err.data}`, 'var(--toast-red)', 5000) )
 
@@ -85,7 +107,11 @@
 
        {#if context.pwConfirm} 
             <span class="mt-4 mt-sm-2">Please enter the code, we send to your E-Email Adress</span>
-            <span class="mt-2 mt-sm-2"><input type="text" bind:value={context.pwConfirmCode}/></span>
+
+            <b class="mt-2">Old Password:</b>
+            <span class="mt-sm-2"><input type="password" bind:value={context.pwConfirmOldPW}/></span>
+            <b class="mt-2">Confirmation Code:</b>
+            <span class="mt-sm-2"><input type="text" bind:value={context.pwConfirmCode}/></span>
 
             <span class="mt-2      mt-sm-1" >
                 <button class="btn" on:click={onConfirm} >confirm</button>

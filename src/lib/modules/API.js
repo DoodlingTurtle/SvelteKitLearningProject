@@ -161,5 +161,8 @@ export function POST(url, body, opts={}) {
 export function PUT(url, body, opts={}) { 
 	return call("put", url, contentTypePreProcess(opts, body) ) 
 }
+export function PATCH(url, body, opts={}) { 
+	return call("PATCH", url, contentTypePreProcess(opts, body) )
+}
 
-export default { GET, POST, PUT, DELETE, addResponseListener, removeResponseListener }
+export default { GET, POST, PUT, PATCH, DELETE, addResponseListener, removeResponseListener }

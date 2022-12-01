@@ -45,7 +45,27 @@ export function htmlentities(str, nl2br=false) {
     return newstr;
 }
 
+export function empty(value, bTrimString=true) {
+    switch(typeof(value))  {
+        case 'number':
+            return value == 0;
+
+        case 'string':
+            return bTrimString ? value.trim().length == 0 : value.length == 0;
+
+        case 'object':
+            if(value === null) return true;
+            if(value instanceof Array) return value.length == 0;
+            return false;
+
+        case 'undefined':
+            return true;
+
+        default:
+            throw new Error(`could not define if '${value}' is empty is typeof '${typeof(value)}' `);
+    }
+}
 
 export default {
-    formatDate, formatDateTime, htmlentities
+    formatDate, formatDateTime, htmlentities, empty
 }

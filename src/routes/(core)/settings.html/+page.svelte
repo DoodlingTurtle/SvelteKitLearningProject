@@ -23,6 +23,7 @@
     let context = setContext("settingsfrm", {
         myAccountFold: true, 
         pwConfirm: false,
+        pwConfirmOldPW: "",
         pwConfirmCode: "",
 
 
