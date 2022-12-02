@@ -39,7 +39,9 @@
 
         PATCH("/passwordchange", {oldpw: context.pwConfirmOldPW, code: context.pwConfirmCode })
             .then( res => {
-                context.pwConfirm = false;
+                data.pwchange=0;
+                context.pwConfirmOldPW="";
+                context.pwConfirmCode="";
             } )
             .catch( err => {
                 toast("failed to confirm password change " + err.data, 'var(--toast-red)', 6000)
@@ -55,6 +57,9 @@
                     console.warn("unexpected response status: ", res);
                 case 205:  
                     context.pwConfirm = false;
+                    data.pwchange=0
+                    context.pwConfirmOldPW="";
+                    context.pwConfirmCode="";
             }
         })
         .catch( err => {
@@ -84,7 +89,6 @@
                 context.pass = "";
                 context.passRep = "";
                 data.pwchange = "1";
-                context.pwConfirm = true;
             }).catch( err => toast(`password change request failed: ${err.data}`, 'var(--toast-red)', 5000) )
 
     }
@@ -95,36 +99,38 @@
     <h2 slot="legend" class="btn {context.myAccountFold ? 'active' : ''}">Settings:</h2>
 
     <fieldset slot="content" class="frm-myaccount">
-        <p class="mt-1 mb-3 mt-sm-1 mb-sm-3"    >
+        <p class="mt-1 mb-3 mt-sm-1 mb-sm-3" style="grid-area: de"   >
             Here you can change anything in regards to your Account and the App
-            {#if bPasswordMessage}
-                <b transition:slide style:color={bPasswordError ? 'red' : 'green'} style="display: block" class="mb-4 mt-4">{sPasswordMessage}</b>
-            {/if}
         </p>
-        <b class="                    "               >Login:</b>          <span class="                 ">{data.login}</span>
-        <b class="mt-3 mt-xs-2 mt-sm-1"               >E-Mail:</b>         <span class="mt-xs-2 mt-sm-1  ">{data["email"]}</span>
-        <b class="mt-3 mt-xs-2 mt-sm-1"               >Profile:</b>        <span class="mt-xs-2 mt-sm-1  ">{data["profilename"]}</span>
+        <b class="                    "  style="grid-area: ll"  >Login:</b>          <span class="               " style="grid-area: lc">{data.login}</span>
+        <b class="mt-3 mt-xs-2 mt-sm-1"  style="grid-area: el"  >E-Mail:</b>         <span class="mt-xs-2 mt-sm-1" style="grid-area: ec">{data["email"]}</span>
+        <b class="mt-3 mt-xs-2 mt-sm-1"  style="grid-area: nl"  >Profile:</b>        <span class="mt-xs-2 mt-sm-1" style="grid-area: nc">{data["profilename"]}</span>
+        {#if bPasswordMessage}
+            <span class="mt-4 mt-sm-2" style="grid-area: la">
+                <b transition:slide style:color={bPasswordError ? 'red' : 'green'} style="display: block" class="mb-4 mt-4">{sPasswordMessage}</b>
+            </span>
+        {/if}
 
-       {#if context.pwConfirm} 
-            <span class="mt-4 mt-sm-2">Please enter the code, we send to your E-Email Adress</span>
+        {#if context.pwConfirm} 
+            <b class="mt-2" style="grid-area: pl">Old Password:</b>
+            <span class="mt-sm-2" style="grid-area: pc"><input type="password" bind:value={context.pwConfirmOldPW}/></span>
+            <b class="mt-2" style="grid-area: rl">Conf. Code:</b>
+            <span class="mt-sm-2" style="grid-area: rc"><input type="text" bind:value={context.pwConfirmCode}/></span>
 
-            <b class="mt-2">Old Password:</b>
-            <span class="mt-sm-2"><input type="password" bind:value={context.pwConfirmOldPW}/></span>
-            <b class="mt-2">Confirmation Code:</b>
-            <span class="mt-sm-2"><input type="text" bind:value={context.pwConfirmCode}/></span>
-
-            <span class="mt-2      mt-sm-1" >
+            <span class="mt-2      mt-sm-1"  style="grid-area: cp">
                 <button class="btn" on:click={onConfirm} >confirm</button>
                 <button class="btn" on:click={onCancel} >cancel change</button>
             </span>
-       {:else}
-            <b class="mt-4         mt-sm-2" 
-                style:color={bPasswordError ? 'red' : ''} >Password:</b>       <span class="mt-xs-4 mt-sm-2  "><input type="password" bind:value={context.pass} /></span>
-            <b class="mt-2         mt-sm-1" 
-                style:color={bPasswordError ? 'red' : ''} >Password Repeat:</b><span class="mt-xs-2 mt-sm-1  "><input type="password" bind:value={context.passRep} /></span>
+        {:else}
+            <b class="mt-4         mt-sm-2" style="grid-area: pl"
+                style:color={bPasswordError ? 'red' : ''} >Password:</b>       
+                <span class="mt-xs-4 mt-sm-2" style="grid-area: pc"><input type="password" bind:value={context.pass} /></span>
+            <b class="mt-2         mt-sm-1" style="grid-area: rl" 
+                style:color={bPasswordError ? 'red' : ''} >Password Repeat:</b>
+                <span class="mt-xs-2 mt-sm-1" style="grid-area: rc"><input type="password" bind:value={context.passRep} /></span>
 
-            <span class="mt-2      mt-sm-1" ><button class="btn" on:click={onclick} >change password</button></span>
-       {/if}
+            <span class="mt-2      mt-sm-1" style="grid-area: cp" ><button class="btn" on:click={onclick} >change password</button></span>
+        {/if}
     </fieldset>
 </FoldContainer>
 
@@ -135,7 +141,7 @@
     .frm-myaccount {
         display: grid;
         grid-gap: 0.25rem;
-        grid-template-areas: "de" "ll" "lc" "el" "ec" "nl" "nc" "pl" "pc" "rl" "rc" "cp";
+        grid-template-areas: "de" "ll" "lc" "el" "ec" "nl" "nc" "la" "pl" "pc" "rl" "rc" "cp";
         grid-template-columns: 1fr;
         align-items: flex-end;
 
@@ -149,6 +155,7 @@
                 "ll lc"
                 "el ec"
                 "nl nc"
+                "la la"
                 "pl pc"
                 "rl rc"
                 "cp cp";
@@ -160,6 +167,7 @@
                 "de de de de de"
                 "ll lc lc el ec"
                 "nl nc nc nc nc"
+                "la la la la la"
                 "pl pl pc pc pc"
                 "rl rl rc rc rc"
                 "cp cp cp cp cp"
@@ -174,6 +182,7 @@
                 "ll lc"
                 "el ec"
                 "nl nc"
+                "la la"
                 "pl pc"
                 "rl rc"
                 "cp cp";
@@ -184,6 +193,7 @@
             grid-template-areas:
                 "de de de de de de de de"
                 "ll lc .  el ec .  nl nc"
+                "la la la la la la la la"
                 "pl pl pc pc pc pc pc pc"
                 "rl rl rc rc rc rc rc rc"
                 "cp cp cp cp cp cp cp cp";
@@ -195,7 +205,8 @@
             grid-template-areas:
                 "de de de de de de de de"
                 "ll lc .  el ec .  nl nc"
-                "pl pl pc pc pc pc .  . "
+                "la la la la la la la la"
+                "pl pl pc pc pc pc cp cp"
                 "rl rl rc rc rc rc cp cp";
 
                 grid-template-columns: 0fr 1fr 1.5fr 0fr 1fr 1.5fr 0fr 1fr;
@@ -205,17 +216,5 @@
 
         > B { white-space: nowrap; }
 
-        :nth-child(1) { grid-area: de;}
-        :nth-child(2) { grid-area: ll;}
-        :nth-child(3) { grid-area: lc;}
-        :nth-child(4) { grid-area: el;}
-        :nth-child(5) { grid-area: ec;}
-        :nth-child(6) { grid-area: nl;}
-        :nth-child(7) { grid-area: nc;}
-        :nth-child(8) { grid-area: pl;}
-        :nth-child(9) { grid-area: pc;}
-        :nth-child(10){ grid-area: rl;}
-        :nth-child(11){ grid-area: rc;}
-        :nth-child(12){ grid-area: cp;}
     }
 </style>
