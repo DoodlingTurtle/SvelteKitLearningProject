@@ -36,6 +36,15 @@
 .xl-hidden  { display: initial; }
 .xxl-hidden { display: initial; }
 
+.btnClean {
+    border: none;
+    background: none;
+    padding: 0px;
+    margin: 0px;
+    box-sizing: initial;
+    text-align: left;
+}
+
 @media (min-width: $media-xs) {
 
     .mt-xs-0 { margin-top: 0rem !important; }
