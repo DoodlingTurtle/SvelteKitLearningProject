@@ -1,4 +1,8 @@
 <script>
+
+    import { flip } from "svelte/animate";
+    import { fly } from 'svelte/transition';
+
     export let source = {};
     export let value = [];
     export let height = 16;
@@ -56,15 +60,16 @@
     <div class="list" style:height={height + "rem"}>
         <label>available:</label>
         {#each noneselected as opt (opt)}
-            {#if visible.indexOf(opt) > -1}
-                <button
-                    class="mt-2 btnClean"
-                    class:sel={selHighlight[opt] === true}
-                    on:click={() => (selHighlight[opt] = !selHighlight[opt])}
-                >
-                    {@html source[opt]}
-                </button>
-            {/if}
+            <button
+                style:display={visible.indexOf(opt) > -1 ? 'block' : 'none'}
+                class="mt-2 btnClean"
+                class:sel={selHighlight[opt] === true}
+                on:click={() => (selHighlight[opt] = !selHighlight[opt])}
+                animate:flip
+                transition:fly
+            >
+                {@html source[opt]}
+            </button>
         {/each}
     </div>
 
@@ -76,15 +81,16 @@
     <div class="list" style:height={height + "rem"}>
         <label>assigned:</label>
         {#each selected as opt (opt)}
-            {#if visible.indexOf(opt) > -1}
-                <button
-                    class="mt-2 btnClean"
-                    class:sel={selHighlight[opt] === true}
-                    on:click={() => (selHighlight[opt] = !selHighlight[opt])}
-                >
-                    {@html source[opt]}
-                </button>
-            {/if}
+            <button
+                style:display={visible.indexOf(opt) > -1 ? 'block' : 'none'}
+                class="mt-2 btnClean"
+                class:sel={selHighlight[opt] === true}
+                on:click={() => (selHighlight[opt] = !selHighlight[opt])}
+                animate:flip
+                transition:fly
+            >
+                {@html source[opt]}
+            </button>
         {/each}
     </div>
 </div>
