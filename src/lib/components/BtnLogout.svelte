@@ -1,6 +1,7 @@
 <script>
     import {goto} from '$app/navigation';
     import { cleanStore, loggedin } from '$lib/modules/Stores';
+    import DB from '$lib/modules/database'
     import Modal from './Modal.svelte';
     import {DELETE} from "$lib/modules/API";
 
@@ -9,11 +10,11 @@
     let dialogOpen = false;
 
     const logout = async () => {
-        try {
-            await DELETE('/session')
-        }catch(e) { /* nop */ }
+        try { await DELETE('/session') }catch(e) { /* nop */ }
 
+        await DB.clear(); 
         cleanStore();
+
         goto("/"); 
     }
 
