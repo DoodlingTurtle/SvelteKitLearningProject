@@ -19,7 +19,7 @@ let apiurl = "";
 let Authorization = "";
 
 api_token.subscribe(obj => Authorization = `Bearer ${obj}` );
-api_url  .subscribe(obj => { console.log("apiurl-update: ", obj); apiurl = obj } );
+api_url  .subscribe(obj => apiurl = obj  );
 
 function call(method, url, opts) {
 	const resType = opts.expect || "";
@@ -78,7 +78,7 @@ function call(method, url, opts) {
 						break;
 
 					default:
-						console.log("unexpected response", data);
+						console.warn("unexpected response", data);
 						if(!ignore[data.status] && statusEventHandlers[data.status]) {
 							statusEventHandlers[data.status].forEach( (h) => {
 								h(data);
@@ -100,7 +100,7 @@ function call(method, url, opts) {
 				}
 			})
 			.catch( (...args) => {
-				console.log("error during fetch", args);
+				console.error("error during fetch", args);
 				if(oRes && oRes.status && !ignore[oRes.status] && statusEventHandlers[oRes.status]) {
 					statusEventHandlers[oRes.status].forEach( (h) => {
 						h(oRes);
