@@ -1,34 +1,36 @@
 <script>
-    import { fade } from "svelte/transition";
     import { page } from "$app/stores";
     import { GET } from "$lib/modules/API";
+    import { onMount } from "svelte";
 
-    import PageTitle from "$lib/components/PageTitle.svelte";
-    import Loader from "$lib/components/Loader.svelte";
-    import SwtichList from "$lib/components/SwtichList.svelte";
-    import FoldContainer from "$lib/components/FoldContainer.svelte";
+    import UserModules from './UserModules'
 
     let uid = parseInt($page.url.searchParams.get("uid") || "0");
     let userdata;
+
+    let modulesStore = null;
 
     $: if (isNaN(uid)) uid = 0;
     $: userDataPromise = GET(`/user/${uid}`, { expect: "json" }).then(
         (data) => (userdata = data)
     );
 
-    let availableModules = {
-        opt1: "Option 1",
-        opt2: "Option 2",
-        opt3: "Option 3",
-        opt4: "Option 4",
-        opt5: "Option 5",
-        opt14: "Option 14",
-    };
+    let availableModules = {}; 
+    let assignedModules = [];
 
-    let assignedModules = ["opt1", "opt3"];
+    onMount(async () => {
+        modulesStore = await UserModules();
+        availableModules = await modulesStore.getAvailable(); 
+    })
+
+
+    import PageTitle from "$lib/components/PageTitle.svelte";
+    import Loader from "$lib/components/Loader.svelte";
+    import SwtichList from "$lib/components/SwtichList.svelte";
+    import FoldContainer from "$lib/components/FoldContainer.svelte";
 </script>
 
-<div class="page-user-edit" in:fade>
+<div class="page-user-edit">
     <a href="./list.html">&larr; back</a>
     <PageTitle
         alternateContainer="#ApplicationTitleBar"
