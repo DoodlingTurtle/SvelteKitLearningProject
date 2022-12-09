@@ -2,7 +2,6 @@
     import PageTitle from "$lib/components/PageTitle.svelte";
     import BtnDelete from "$lib/components/BtnDelete.svelte";
 
-    import { fade, slide } from "svelte/transition";
     import { flip } from "svelte/animate"
     import { DELETE, GET } from '$lib/modules/API'
 
@@ -42,7 +41,7 @@
 </script>
 
 
-<div class="page-users-list" in:fade>
+<div class="page-users-list">
     <PageTitle alternateContainer="#ApplicationTitleBar" scrollListener="#AppContainer">Userlist</PageTitle>
 
     <section class="users-list">

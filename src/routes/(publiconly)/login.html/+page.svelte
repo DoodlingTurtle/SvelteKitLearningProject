@@ -1,4 +1,4 @@
-<section class="flex_center" data-page="login" in:fade>
+<section class="flex_center" data-page="login">
     <h1 class="flex_fill">Login</h1>
     <div class="spacer"></div>
 

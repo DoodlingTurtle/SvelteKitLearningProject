@@ -18,7 +18,12 @@
     import API from '$lib/modules/API';
     import { goto } from '$app/navigation';
     import { cleanStore, loginPageErrorMessage } from '$lib/modules/Stores';
+
+    import { page } from '$app/stores';
+
+
     import ToastMsg from './ToastMsg.svelte';
+    import PageTransition from './PageTransition.svelte';
 
     //======================================================================
     // Logout if server can't find an Answer
@@ -36,7 +41,9 @@
 </script>
 
 <div id="AppContainer">
-    <slot />
+    <PageTransition url={$page.url.pathname} duration={500}>
+        <slot />
+    </PageTransition>
 </div>
 
 <Navi />

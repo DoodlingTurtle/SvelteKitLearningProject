@@ -1,9 +1,8 @@
 <script>
     import PageTitle from '$lib/components/PageTitle.svelte';
-    import { fade } from 'svelte/transition';
 </script>
 
-<div data-page="main" in:fade>
+<div data-page="main">
     <PageTitle alternateContainer="#ApplicationTitleBar" scrollListener="#AppContainer">Home</PageTitle>
     
     <article>
