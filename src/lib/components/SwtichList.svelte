@@ -58,7 +58,7 @@
 
 <div class="container">
     <div class="list" style:height={height + "rem"}>
-        <label>available:</label>
+        <label for={""}>available:</label>
         {#each noneselected as opt (opt)}
             <button
                 style:display={visible.indexOf(opt) > -1 ? 'block' : 'none'}
@@ -79,7 +79,7 @@
     </div>
 
     <div class="list" style:height={height + "rem"}>
-        <label>assigned:</label>
+        <label for={""}>assigned:</label>
         {#each selected as opt (opt)}
             <button
                 style:display={visible.indexOf(opt) > -1 ? 'block' : 'none'}
