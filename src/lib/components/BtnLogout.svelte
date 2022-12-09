@@ -10,9 +10,8 @@
     let dialogOpen = false;
 
     const logout = async () => {
-        try { await DELETE('/session') }catch(e) { /* nop */ }
-
         await DB.clear(); 
+        try { await DELETE('/session') }catch(e) { /* nop */ }
         cleanStore();
 
         goto("/"); 
