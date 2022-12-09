@@ -25,69 +25,22 @@ Example:
 <a class:active={open} href={"#"} on:click|preventDefault={ () => open = !open }>
     <slot name="legend"><em>no slot named &quot;legend&quot; found</em></slot>
 </a>
-<div class="folding-container" class:open={open} bind:this={foldingcontainer} >
+{#if open}
+<div class="folding-container" transition:slide|local >
     <slot name="content"><em>no slot named &quot;content&quot; found</em></slot>
 </div>
+{/if}
 
 
 <script>
-    import { createEventDispatcher, onDestroy, onMount } from "svelte";
-    const dispatch = createEventDispatcher();
+    import { createEventDispatcher } from "svelte";
+    import { slide } from "svelte/transition";
+    const on = createEventDispatcher();
     
     export let open = true;
-    $: dispatch("toggle", open);
-
-    /**
-     * @type {HTMLDivElement | null}
-     */
-    let foldingcontainer = null;
-
-    const onFoldContainerAnimationEnd = () => {
-        //only add Folding transition after the first animation played 
-        // (Animations play as soon, as the item is added to the doem)
-        if(foldingcontainer)
-            foldingcontainer.style.transition = "max-height .5s";
-    };
+    $: on("toggle", open);
     
-    const onFoldContainerAnimationStart = (/** @type {{ animationName: string; }} */ ev) => {
-        if(ev.animationName == "folding-container-close") {
-            if(foldingcontainer)
-                foldingcontainer.style.maxHeight = foldingcontainer.offsetHeight + "px";
-
-            window.setTimeout(() => {
-                if(foldingcontainer)
-                    foldingcontainer.style.maxHeight = ""
-            });
-        }
-        else if (ev.animationName == "folding-container-open"){
-            if(foldingcontainer)
-                foldingcontainer.style.maxHeight = "";
-        }
-    };
-
-
-
-    onMount(() => {
-        if(foldingcontainer) {
-            foldingcontainer.addEventListener("animationstart", onFoldContainerAnimationStart);
-            foldingcontainer.addEventListener("animationend", onFoldContainerAnimationEnd);
-        }
-    })
-
-    onDestroy(() => {
-        if(foldingcontainer) {
-            foldingcontainer.removeEventListener("animationstart", onFoldContainerAnimationStart);
-            foldingcontainer.removeEventListener("animationend", onFoldContainerAnimationEnd);
-        }
-    })
-
-
 </script>
-
-<svelte:head><style>
-    @keyframes folding-container-open {}
-    @keyframes folding-container-close{}
-</style></svelte:head>
 
 <style lang='scss'>
     A {
@@ -101,15 +54,6 @@ Example:
         margin: 0px;
     }
 
-    .folding-container {
-        overflow: hidden;
-        animation: folding-container-close .5s;
-        max-height: 0px;
-        
-        &.open {
-            animation: folding-container-open .5s;
-            max-height: 1440px;
-        }
-    }
+    .folding-container { overflow: hidden; }
 
 </style>
