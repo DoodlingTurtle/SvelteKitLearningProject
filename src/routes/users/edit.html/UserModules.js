@@ -1,50 +1,93 @@
+import { writable } from 'svelte/store';
+
 import { DatabaseStore, registerStore } from '../../../lib/modules/database'
 import { GET } from '$lib/modules/API';
 import DebugModule from '$lib/modules/Debug';
+import { empty } from '$lib/modules/Utils';
 
 const debug = DebugModule.prefix("UserModules");
 
 /** @type {DatabaseStore} */
 const store = new DatabaseStore(
-    "user_modules", { keyPath: 'id' }, { "id": {keyPath: 'id', options: {unique: true}} } 
+    "user_modules", 
+    { keyPath: 'id' }, 
+    { "id": {keyPath: 'id', options: {unique: true}} } 
 )
 
-async function getAvailable() {
-    const ret = {};
+export const user_modules = new writable([], (set) => {
+    user_modules.pset = set; 
+    (async () => {
+        let ret = [];
+        await registerStore(store);
+        ret = await store.getAll();
 
-    await store.tx(async (st, tx) => {
-        let cur = await st.openCursor();
-        let obj = {};
-        while(cur) {
-            ret[cur.key] = cur.value.id;
-            cur = await cur.continue();
-        }
-    })
+        if(empty(ret))
+            reload();
+        else set(ret);
+    })()
 
-    return ret;
+    return () => { set([]) }
+});
+
+user_modules.set = async function(val) {
+
+    const _debug= debug.prefix(".user_mdoules.set()");
+    _debug.log("start");
+
+    if(!(val instanceof Array)) {
+        _debug.warn("value is not an array. erasing all data");
+        val = [];
+    }
+
+    await registerStore(store);
+    await store.tx((store, tx) => {
+        val.forEach( async (e, i, a) => {
+            if(!e) return;
+            _debug.log("put ", e, await store.put(e))
+        } )
+    }, 'readwrite');
+
+    _debug.log("set parent value");
+    user_modules.pset(val);
+
 }
 
-export async function getInstance () {
-    await registerStore(store);
-       
-    await GET("/users/modules", {expect: 'json'})
-        .then( data => {
-            data = data.data;
+export async function reload() {
+    const _debug = debug.prefix(".update()")
+    _debug.log("Start update")
 
-            debug.log("got data",data)
-            store.tx((st, tx) => {
-                debug.log("update")
-                data.forEach( (element) => {
-                    st.put(element);
-                });
-            }, 'readwrite') 
-        });            
+    const res = await GET("/users/modules", {expect: 'json'});
+    const data = res.data; 
 
-    return {
-        getAvailable
+    if(data) {
+        switch(res.status) {
+            case 204: /* No Content */
+                _debug.log("no update needed");
+                break;
+
+            case 205: /* Reset Content */
+                _debug.log("server requests content reset");
+                await clear();
+
+            case 200:
+                _debug.log("update store")
+                await user_modules.set(data);
+        }
     }
 }
 
+export async function clear() {
+    const _debug = debug.prefix(".clear()")
+    _debug.log("reset store");
+    user_modules.set([]);
+}
 
 
-export default getInstance;
+
+export default { reload, user_modules, clear }
+
+
+
+
+
+

@@ -1,28 +1,25 @@
 <script>
     import { page } from "$app/stores";
     import { GET } from "$lib/modules/API";
-    import { onMount } from "svelte";
 
-    import UserModules from './UserModules'
+    import { user_modules } from './UserModules'
 
     let uid = parseInt($page.url.searchParams.get("uid") || "0");
     let userdata;
 
-    let modulesStore = null;
-
     $: if (isNaN(uid)) uid = 0;
-    $: userDataPromise = GET(`/user/${uid}`, { expect: "json" }).then(
-        (data) => (userdata = data)
-    );
+    $: userDataPromise = GET(`/user/${uid}`, { expect: "json" }).then( (data) => (userdata = data));
 
-    let availableModules = {}; 
+    $: availableModules = (()=>{
+        let ret = {};
+        ($user_modules||[]).forEach( (e, i, a) => {
+            ret[e.id] = e.id;
+        } )
+
+        return ret;
+    })(); 
+
     let assignedModules = [];
-
-    onMount(async () => {
-        modulesStore = await UserModules();
-        availableModules = await modulesStore.getAvailable(); 
-    })
-
 
     import PageTitle from "$lib/components/PageTitle.svelte";
     import Loader from "$lib/components/Loader.svelte";
