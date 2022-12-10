@@ -38,41 +38,50 @@ It also allows for the definition of message prefixes, to make searching the log
 
 */
 
-
 import { dev } from "$app/environment";
 
-
-let debug = Object.create({...console, _prefix: ''});
-
-debug.prefix = function (prefix) {
-    let ni = Object.create(this);
-    ni._prefix = `${this._prefix}${prefix}`; 
-    return ni;
+const replace_fnc = {
+    'log': true, 
+    'warn': true, 
+    'error': true, 
+    'info': true, 
+    'group': true,
 }
 
-debug.mkcall = function(args, meth) {
-    if(this._prefix)
-        args.unshift(`[${this._prefix}]`); 
+function nop(...args) {}
 
-    if(args.length)
-        meth.apply(this, args);
+function newProxy(_prefix) {
+
+    return {
+        get: function (target, prop) {
+            switch (prop) {
+                case '_prefix': return _prefix;
+
+                case 'prefix': return this[prop];
+
+                default:       
+                    if(!dev && prop != 'error') 
+                        return nop;
+                    
+                    if(replace_fnc[prop]) 
+                        return (...args) => {
+                            if(_prefix)
+                                args.unshift(`[${_prefix}]`); 
+
+                                if(args.length)
+                                    target[prop].apply(target, args);
+                        }
+                    
+                    return target[prop]
+            }
+        },
+
+        prefix: (p) => new Proxy(console, newProxy(_prefix + p)),
+    }
 }
 
 
-debug.error = function (...args) { this.mkcall( args, console.error ) }
 
-if(!dev) {
-    // If production, disable common logging methods
-    debug.log   = (...args) => {}
-    debug.warn  = (...args) => {}
-    debug.dir   = (...args) => {}
-    debug.table = (...args) => {}
-}
-else {
-    debug.log = function (...args) { this.mkcall( args, console.log ) }
-    debug.warn = function (...args) { this.mkcall( args, console.warn ) }
-    debug.dir = function (...args) { this.mkcall( args, console.dir ) }
-    debug.table = function (...args) { this.mkcall( args, console.table ) }
-}
+export const DebugModule = new Proxy(console, newProxy(''));
 
-export default debug; 
+export default DebugModule;
