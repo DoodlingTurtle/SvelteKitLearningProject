@@ -80,6 +80,14 @@ export class DatabaseStore {
         }
         else throw new Error("no database");
     }
+
+    getAll = async () => {
+        let debug = this._debug.prefix(`.getAll()`);
+        debug.log("start");
+        const tx = await this._db.transaction(this._key, 'readonly');
+        return await tx.store.getAll();
+    }
+
     name() { return this._key };
 }
 
