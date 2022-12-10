@@ -95,8 +95,10 @@ if(browser) {
 
 async function getDB() {
     let _debug = debug.prefix(".getDB()");
-    _debug.log("is browser", browser);
-    if(!browser) return;
+    if(!browser) {
+        _debug.log("is not browser browser => skip database stuff");
+        return;
+    }
 
     if(!DB) {
         try {
@@ -140,17 +142,14 @@ async function getDB() {
                     }
                 });
             }
-            _debug.log("got db", DB); 
+            _debug.log("opened DB", DB); 
             return DB;
         }
         catch(err) {
             _debug.error("error", err)
         }
     }
-    else {
-        _debug.log("database already open", DB); 
-        return DB;
-    }
+    else return DB;
 
     throw new Error("[database.getDB] could not open Database");
 }
