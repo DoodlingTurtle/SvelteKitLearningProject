@@ -1,7 +1,7 @@
 <script>
-
-    import { flip } from "svelte/animate";
-    import { fly } from 'svelte/transition';
+    import { onMount } from "svelte";
+    import { crossfade, fly } from "svelte/transition";
+    import { quintOut } from 'svelte/easing';
 
     export let source = {};
     export let value = [];
@@ -12,20 +12,56 @@
     $: selHighlight = { ...source };
     $: for (let a in source) selHighlight[a] = false;
 
-    $: noneselected = Object.keys(source).filter((e) => value.indexOf(e) == -1);
-    $: selected = Object.keys(source).filter((e) => value.indexOf(e) != -1);
+    $: noneselected = Object.keys(source).filter((e) => e && value.indexOf(e) == -1);
+    $: selected = Object.keys(source).filter((e) => e && value.indexOf(e) != -1);
 
-    $: visible = Object.keys(source);
+    const lastclickedOpt = { 'l': -1, 'r': -1 };
+    let heldShift = false; 
+    let visible = [];
 
-    $: if (filter || source)
-        visible = Object.keys(source).filter((e) => {
-            const regExp = new RegExp(`${filter || ".*"}`, "gims");
-            const found = regExp.exec(source[e]);
+    const onOptClick = (lst, opt, index) => {
 
-            if (!found) selHighlight[e] = false;
+        const lstname = lst == selected ? 'r' : 'l'
 
-            return found;
-        });
+        if(heldShift) {
+            let start = 0;
+            let end = 0;
+            let offset = 0;
+
+            if(lastclickedOpt[lstname] < index) {
+                start = lastclickedOpt[lstname];
+                offset = 1;
+                end = index; 
+            }
+            else if(lastclickedOpt[lstname]  > index) {
+                start = index; 
+                end = lastclickedOpt[lstname];
+            }
+
+            for(let a = start + offset; a < end + offset; a++) {
+                if(visible.indexOf(lst[a]) > -1)
+                    selHighlight[lst[a]] = !selHighlight[lst[a]];
+            }
+        }
+        else selHighlight[opt] = !selHighlight[opt]
+
+        lastclickedOpt[lstname] = index;
+    }
+
+    let filterDebounce = undefined;
+    const onFilterChange = () => {
+        window.clearTimeout(filterDebounce);
+        filterDebounce = window.setTimeout(() => {
+            visible = Object.keys(source).filter((e) => {
+                const regExp = new RegExp(`${filter || ".*"}`, "gims");
+                const found = regExp.exec(source[e]);
+                if (!found) selHighlight[e] = false;
+
+                console.log(found);
+                return found;
+            });
+        }, 250);
+    }
 
     const l2r = () => {
         noneselected.forEach((e) => {
@@ -35,6 +71,9 @@
             }
         });
         value = value;
+
+        lastclickedOpt['l'] = -1;
+        lastclickedOpt['r'] = -1;
     };
 
     const r2l = () => {
@@ -48,28 +87,54 @@
             }
         });
         value = value;
+
+        lastclickedOpt['l'] = -1;
+        lastclickedOpt['r'] = -1;
     };
+
+    let [crosssend, crossreceive] = crossfade({ fallback(node, params) {
+			const style = getComputedStyle(node);
+			const transform = style.transform === 'none' ? '' : style.transform;
+
+			return {
+				duration: 500,
+				easing: quintOut,
+				css: t => `
+					transform: ${transform} scale(${t});
+					opacity: ${t}
+				`
+			};
+		} })
+
+    onMount(() => onFilterChange())
 </script>
+
+<svelte:window 
+    on:keydown={ (ev) => { heldShift = ev.shiftKey; return true }}
+    on:keyup={   (ev) => { heldShift = ev.shiftKey; return true }}
+/>
+
 
 <div class="mb-2 mt-2">
     <label for="filter">Filter:</label>
-    <input id="filter" type="text" bind:value={filter} />
+    <input id="filter" type="text" bind:value={filter} on:keydown={onFilterChange} />
 </div>
 
 <div class="container">
     <div class="list" style:height={height + "rem"}>
         <label for={""}>available:</label>
-        {#each noneselected as opt (opt)}
+        {#each noneselected as opt,index (opt)}
+            {#if visible.indexOf(opt) > -1}
             <button
-                style:display={visible.indexOf(opt) > -1 ? 'block' : 'none'}
                 class="mt-2 btnClean"
                 class:sel={selHighlight[opt] === true}
-                on:click={() => (selHighlight[opt] = !selHighlight[opt])}
-                animate:flip
-                transition:fly
+                on:click={ () => onOptClick(noneselected, opt, index) }
+                in:crossreceive={{key: opt}}
+                out:crosssend={{key: opt}}
             >
                 {@html source[opt]}
             </button>
+            {/if}
         {/each}
     </div>
 
@@ -80,17 +145,18 @@
 
     <div class="list" style:height={height + "rem"}>
         <label for={""}>assigned:</label>
-        {#each selected as opt (opt)}
+        {#each selected as opt,index (opt)}
+            {#if visible.indexOf(opt) > -1}
             <button
-                style:display={visible.indexOf(opt) > -1 ? 'block' : 'none'}
                 class="mt-2 btnClean"
                 class:sel={selHighlight[opt] === true}
-                on:click={() => (selHighlight[opt] = !selHighlight[opt])}
-                animate:flip
-                transition:fly
+                on:click={ () => onOptClick(selected, opt, index) }
+                in:crossreceive={{key: opt}}
+                out:crosssend={{key: opt}}
             >
                 {@html source[opt]}
             </button>
+            {/if}
         {/each}
     </div>
 </div>
