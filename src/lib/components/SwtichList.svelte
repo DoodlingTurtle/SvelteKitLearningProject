@@ -12,8 +12,17 @@
     $: selHighlight = { ...source };
     $: for (let a in source) selHighlight[a] = false;
 
-    $: noneselected = Object.keys(source).filter((e) => e && value.indexOf(e) == -1);
-    $: selected = Object.keys(source).filter((e) => e && value.indexOf(e) != -1);
+    $: noneselected = (() => { 
+        const lst = Object.keys(source).filter((e) => e && value.indexOf(e) == -1); 
+        onFilterChange(); 
+        return lst; 
+    })()
+
+    $: selected =     (() => { 
+        const lst = Object.keys(source).filter((e) => e && value.indexOf(e) != -1); 
+        onFilterChange(); 
+        return lst; 
+    })()
 
     const lastclickedOpt = { 'l': -1, 'r': -1 };
     let heldShift = false; 
@@ -48,19 +57,13 @@
         lastclickedOpt[lstname] = index;
     }
 
-    let filterDebounce = undefined;
     const onFilterChange = () => {
-        window.clearTimeout(filterDebounce);
-        filterDebounce = window.setTimeout(() => {
-            visible = Object.keys(source).filter((e) => {
-                const regExp = new RegExp(`${filter || ".*"}`, "gims");
-                const found = regExp.exec(source[e]);
-                if (!found) selHighlight[e] = false;
-
-                console.log(found);
-                return found;
-            });
-        }, 250);
+        visible = Object.keys(source).filter((e) => {
+            const regExp = new RegExp(`${filter || ".*"}`, "gims");
+            const found = regExp.exec(source[e]);
+            if (!found) selHighlight[e] = false;
+            return found;
+        });
     }
 
     const l2r = () => {
@@ -92,7 +95,10 @@
         lastclickedOpt['r'] = -1;
     };
 
+    let [crosssend, crossreceive] = crossfade({ fallback: fly });
+    /**
     let [crosssend, crossreceive] = crossfade({ fallback(node, params) {
+
 			const style = getComputedStyle(node);
 			const transform = style.transform === 'none' ? '' : style.transform;
 
@@ -106,6 +112,7 @@
 			};
 		} })
 
+    */
     onMount(() => onFilterChange())
 </script>
 
@@ -117,7 +124,7 @@
 
 <div class="mb-2 mt-2">
     <label for="filter">Filter:</label>
-    <input id="filter" type="text" bind:value={filter} on:keydown={onFilterChange} />
+    <input id="filter" type="text" bind:value={filter} on:keyup={onFilterChange} />
 </div>
 
 <div class="container">
