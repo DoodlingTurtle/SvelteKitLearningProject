@@ -169,8 +169,6 @@
 </div>
 
 <style lang="scss">
-    @import "../css/form.sass";
-
     .container {
         display: grid;
         grid-template-columns: 1fr 0fr 1fr;
