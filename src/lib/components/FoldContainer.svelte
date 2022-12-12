@@ -21,7 +21,7 @@ Example:
 -->
 
 
-
+<span class={className} {style}>
 <a class:active={open} href={"#"} on:click|preventDefault={ () => open = !open }>
     <slot name="legend"><em>no slot named &quot;legend&quot; found</em></slot>
 </a>
@@ -30,13 +30,17 @@ Example:
     <slot name="content"><em>no slot named &quot;content&quot; found</em></slot>
 </div>
 {/if}
-
+</span>
 
 <script>
     import { createEventDispatcher } from "svelte";
     import { slide } from "svelte/transition";
     const on = createEventDispatcher();
+
+    export let className="";
+    export let style="";
     
+
     export let open = true;
     $: on("toggle", open);
     
