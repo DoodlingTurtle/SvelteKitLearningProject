@@ -5,21 +5,26 @@
     import { user_modules } from './UserModules'
 
     let uid = parseInt($page.url.searchParams.get("uid") || "0");
-    let userdata;
+    let loadeduid = 0;
+
+    let assignedModules = [];
+    let userDataPromise = Promise.resolve();
 
     $: if (isNaN(uid)) uid = 0;
-    $: userDataPromise = GET(`/user/${uid}`, { expect: "json" }).then( (data) => (userdata = data));
+    $: if(uid != loadeduid && uid > 0) {
+        console.log("change of uid")
+        userDataPromise = GET(`/user/${uid}`, { expect: "json" }).then( (data) => {
+            assignedModules = ((data.data||{}).rights||"").split(",").filter( (e) => e.trim() != '' )
+        });
+
+        loadeduid = uid;
+    }
 
     $: availableModules = (()=>{
         let ret = {};
-        ($user_modules||[]).forEach( (e, i, a) => {
-            ret[e.id] = e.id;
-        } )
-
+        ($user_modules||[]).forEach( (e, i, a) => ret[e.id] = e.id )
         return ret;
     })(); 
-
-    let assignedModules = [];
 
     import PageTitle from "$lib/components/PageTitle.svelte";
     import Loader from "$lib/components/Loader.svelte";
@@ -39,9 +44,16 @@
     {#await userDataPromise}
         <Loader />
     {:then unused}
-        <FoldContainer>
-            <h2 slot="legend" class="btn">Modules:</h2>
 
+        <FoldContainer className="mb-2 d-block">
+            <h2 slot="legend" class="btn">Account</h2>
+            <fieldset slot="content">
+
+            </fieldset>
+        </FoldContainer>
+
+        <FoldContainer className="mb-2 d-block">
+            <h2 slot="legend" class="btn">Modules:</h2>
             <fieldset slot="content">
                 <SwtichList
                     height="16"
