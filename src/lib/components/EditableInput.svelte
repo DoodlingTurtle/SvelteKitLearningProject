@@ -1,6 +1,5 @@
 <script>
     import { createEventDispatcher } from 'svelte';
-    import {empty} from '../modules/Utils'
 
     export let type  ="";
 
@@ -8,6 +7,8 @@
 
     export let value = "";
     export let id = "";
+    export let style = "";
+    export let className = "";
     export let name = "";
     export let placeholder = "";
 
@@ -18,7 +19,7 @@
 
 </script>
 
-<span>
+<span {style} class={className}>
     <div class="main-input" class:edit={edit}>
         <input 
             type="text"
@@ -30,7 +31,7 @@
             on:keyup={(ev) => on("keyup", ev)} 
             
             {id} {name} {placeholder} />
-        <span  area-hidden=true >{value ? valueFormat(value) : (placeholder || ' ') }</span>
+        <span  area-hidden=true class:placeholder={!value}>{value ? valueFormat(value) : (placeholder || ' ') }</span>
     </div>
 </span>
 
@@ -51,13 +52,13 @@
         box-shadow: none;
         font-size: 1em;
 
-        &.placeholder {
-            color: gray;
-        }
+    }
+
+    SPAN.placeholder {
+        color: gray;
     }
 
     .main-input {
-
 
         display: inline-block;
         position: relative;
