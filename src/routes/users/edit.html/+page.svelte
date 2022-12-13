@@ -12,6 +12,8 @@
 
     let currentLogin = "";
     let currentUserName = "";
+    let currentUserEmail = "";
+
     let editAccount = false;
 
     $: if (isNaN(uid)) uid = 0;
@@ -25,6 +27,7 @@
                     .filter((e) => e.trim() != "");
                 currentLogin = ud.login || "";
                 currentUserName = ud.profilename || "";
+                currentUserEmail = ud.email || "";
             }
         );
 
@@ -59,13 +62,22 @@
         <FoldContainer className="user-account mb-2 d-block">
             <h2 slot="legend" class="btn">Account</h2>
             <fieldset slot="content">
-                <b>Login:</b>
-                <EditableInput edit={editAccount} bind:value={currentLogin} placeholder="user login" />
+                <b      style="grid-area: lll" class="mt-2">Login:</b> 
+                <span   style="grid-area: llv" class="mt-2 text-only">{currentLogin}</span>
 
-                <b>Username:</b>
-                <EditableInput edit={editAccount} bind:value={currentUserName} placeholder="user name" />
 
-                <button class="btn" on:click={() => editAccount = !editAccount}>Edit</button>
+                <b      style="grid-area: prl" class="mt-2">Username:</b>
+                <EditableInput 
+                        style="grid-area: prv" className="mt-2" edit={editAccount} bind:value={currentUserName} placeholder="user name" />
+                <button style="grid-area: prb" class="mb-2 mb-sm-0 btn" on:click={() => editAccount = !editAccount}>{editAccount ? 'save' : 'edit'}</button>
+
+
+                <b      style="grid-area: eml" class="mt-4 mt-xs-2">E-Mail:</b>
+                <span   style="grid-area: emv" class="mt-0 mt-xs-2 text-only">{currentUserEmail}</span>
+                <button style="grid-area: emb" class="mb-2 mb-sm-0 btn"                                            >request change</button>
+
+
+                <button style="grid-area: pcb" class="btn mt-4">request password change</button>
             </fieldset>
         </FoldContainer>
 
@@ -88,6 +100,10 @@
 <style lang="scss">
     @import "colors.sass";
     @import "media.sass";
+
+    SPAN.text-only {
+        padding-inline: .5em;
+    }
 
     :global([slot="legend"]) {
         cursor: pointer;
@@ -122,6 +138,42 @@
     :global(.user-account [slot="content"]) {
         display: grid;
         grid-gap: .5rem;
-        grid-template-columns: 0.5fr 1.5fr;
+
+        grid-template: 
+            "lll llv"
+            "prl prv" 
+            "prb prb"
+
+            "eml eml" 
+            "emv emv"
+            "emb emb"
+            
+            "pcb pcb";
+
+        grid-template-columns: .25fr 1.5fr ;
+        @media(min-width: $media-xs) {
+            grid-template: 
+                "lll llv"
+                "prl prv"
+                "prb prb"
+                "eml emv"
+                "emb emb"
+                
+                "pcb pcb";
+
+            grid-template-columns: .25fr 1.5fr ;
+        }
+
+        @media(min-width: $media-sm) {
+
+            grid-template: 
+                "lll llv llv"
+                "prl prv prb"
+                "eml emv emb"
+                
+                "pcb pcb pcb";
+
+            grid-template-columns: .25fr 2fr .75fr ;
+        }
     }
 </style>
