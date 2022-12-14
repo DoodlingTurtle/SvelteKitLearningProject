@@ -1,30 +1,41 @@
 <script>
     import { page } from "$app/stores";
     import { GET } from "$lib/modules/API";
-
     import { user_modules } from "./UserModules";
+    import debug from "$lib/modules/Debug";
 
+    //====================================================================================
+    // Properties
+    //====================================================================================
     let uid = parseInt($page.url.searchParams.get("uid") || "0");
     let loadeduid = 0;
 
-    let assignedModules = [];
+    let assignedModules = []; let originalModules = [];
+
     let userDataPromise = Promise.resolve();
 
     let currentLogin = "";
     let currentUserName = "";
     let currentUserEmail = "";
 
+    let modulesChanged = false;
     let editAccount = false;
 
+    //====================================================================================
+    // Reactive State
+    //====================================================================================
     $: if (isNaN(uid)) uid = 0;
     $: if (uid != loadeduid && uid > 0) {
-        console.log("change of uid");
+        debug.log("change of uid", uid);
         userDataPromise = GET(`/user/${uid}`, { expect: "json" }).then(
             (data) => {
                 const ud = data.data || {};
                 assignedModules = (ud.rights || "")
                     .split(",")
                     .filter((e) => e.trim() != "");
+
+                originalModules = [ ...assignedModules ];
+
                 currentLogin = ud.login || "";
                 currentUserName = ud.profilename || "";
                 currentUserEmail = ud.email || "";
@@ -40,6 +51,16 @@
         return ret;
     })();
 
+    //====================================================================================
+    // Event Handlers
+    //====================================================================================
+
+
+
+
+    //====================================================================================
+    // Components
+    //====================================================================================
     import PageTitle from "$lib/components/PageTitle.svelte";
     import Loader from "$lib/components/Loader.svelte";
     import SwtichList from "$lib/components/SwtichList.svelte";
@@ -59,38 +80,48 @@
     {#await userDataPromise}
         <Loader />
     {:then unused}
-        <FoldContainer className="user-account mb-2 d-block">
-            <h2 slot="legend" class="btn">Account</h2>
-            <fieldset slot="content">
-                <b      style="grid-area: lll" class="mt-2">Login:</b> 
-                <span   style="grid-area: llv" class="mt-2 text-only">{currentLogin}</span>
+        <div class="main-layout">
+            <FoldContainer className="user-account mb-2 d-block">
+                <h2 slot="legend" class="btn">Account</h2>
+                <fieldset slot="content">
+                    <b      style="grid-area: lll" class="mt-2">Login:</b> 
+                    <span   style="grid-area: llv" class="mt-2 text-only">{currentLogin}</span>
 
 
-                <b      style="grid-area: prl" class="mt-2">Username:</b>
-                <EditableInput 
-                        style="grid-area: prv" className="mt-2" edit={editAccount} bind:value={currentUserName} placeholder="user name" />
-                <button style="grid-area: prb" class="mb-2 mb-sm-0 btn" on:click={() => editAccount = !editAccount}>{editAccount ? 'save' : 'edit'}</button>
+                    <b      style="grid-area: prl" class="mt-2">Username:</b>
+                    <EditableInput 
+                            style="grid-area: prv" className="mt-2" edit={editAccount} bind:value={currentUserName} placeholder="user name" />
+                    <button style="grid-area: prb" class="mb-2 mb-sm-0 btn" on:click={() => editAccount = !editAccount}>{editAccount ? 'save' : 'edit'}</button>
 
 
-                <b      style="grid-area: eml" class="mt-4 mt-xs-2">E-Mail:</b>
-                <span   style="grid-area: emv" class="mt-0 mt-xs-2 text-only">{currentUserEmail}</span>
-                <button style="grid-area: emb" class="mb-2 mb-sm-0 btn"                                            >request change</button>
+                    <b      style="grid-area: eml" class="mt-4 mt-xs-2"          >E-Mail:</b>
+                    <span   style="grid-area: emv" class="mt-0 mt-xs-2 text-only">{currentUserEmail}</span>
+                    <button style="grid-area: emb" class="mb-2 mb-sm-0 btn"      >request change</button>
 
 
-                <button style="grid-area: pcb" class="btn mt-4">request password change</button>
-            </fieldset>
-        </FoldContainer>
+                    <button style="grid-area: pcb" class="btn mt-4">request password change</button>
+                </fieldset>
+            </FoldContainer>
 
-        <FoldContainer className="mb-2 d-block">
-            <h2 slot="legend" class="btn">Modules:</h2>
-            <fieldset slot="content">
-                <SwtichList
-                    height="16"
-                    source={availableModules}
-                    bind:value={assignedModules}
-                />
-            </fieldset>
-        </FoldContainer>
+            <FoldContainer className="mb-2 d-block">
+                <h2 slot="legend" class="btn">Modules:</h2>
+                <fieldset slot="content">
+                    <SwtichList
+                        height="16"
+                        source={availableModules}
+                        bind:value={assignedModules}
+                        on:change={() => {debug.log('modules changed'); modulesChanged = true}}
+                    />
+
+                    {#if modulesChanged}
+                    <div class="two_button_row">
+                        <button class="btn">save</button>
+                        <button class="btn" on:click={() => { assignedModules = [ ...originalModules ]; modulesChanged = false; }}>reset</button>
+                    </div>
+                    {/if}
+                </fieldset>
+            </FoldContainer>
+        </div>
     {:catch err}
         {@const t1 = console.log(err)}
         Something went wrong
@@ -100,6 +131,23 @@
 <style lang="scss">
     @import "colors.sass";
     @import "media.sass";
+
+    .main-layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-gap: .5rem;
+
+        @media (min-width: $media-xl) {
+            grid-template-columns: 1.15fr 0.85fr;
+        }
+    }
+
+
+    .two_button_row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: .5rem;
+    }
 
     SPAN.text-only {
         padding-inline: .5em;
