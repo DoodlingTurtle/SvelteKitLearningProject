@@ -1,11 +1,13 @@
 <script>
     import { onMount } from "svelte";
     import { crossfade, fly } from "svelte/transition";
-    import { quintOut } from 'svelte/easing';
+    import { createEventDispatcher } from "svelte";
 
     export let source = {};
     export let value = [];
     export let height = 16;
+
+    const on = createEventDispatcher();
 
     let filter = "";
 
@@ -77,6 +79,8 @@
 
         lastclickedOpt['l'] = -1;
         lastclickedOpt['r'] = -1;
+        
+        on("change", value);
     };
 
     const r2l = () => {
@@ -93,26 +97,12 @@
 
         lastclickedOpt['l'] = -1;
         lastclickedOpt['r'] = -1;
+
+        on("change", value);
     };
 
     let [crosssend, crossreceive] = crossfade({ fallback: fly });
-    /**
-    let [crosssend, crossreceive] = crossfade({ fallback(node, params) {
 
-			const style = getComputedStyle(node);
-			const transform = style.transform === 'none' ? '' : style.transform;
-
-			return {
-				duration: 500,
-				easing: quintOut,
-				css: t => `
-					transform: ${transform} scale(${t});
-					opacity: ${t}
-				`
-			};
-		} })
-
-    */
     onMount(() => onFilterChange())
 </script>
 
