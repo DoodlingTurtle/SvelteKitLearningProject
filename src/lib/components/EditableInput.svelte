@@ -1,8 +1,6 @@
 <script>
     import { createEventDispatcher } from 'svelte';
 
-    export let type  ="";
-
     export let edit  = false;
 
     export let value = "";
@@ -40,18 +38,6 @@
     :root {
         --inline-padding: .5em;
         --block-padding: 0.125em;
-    }
-
-    BUTTON {
-        display: inline-block;
-        text-align: start;
-        border: none;
-        padding-block: var(--block-padding);
-        padding-inline: var(--inline-padding);
-        background: none;
-        box-shadow: none;
-        font-size: 1em;
-
     }
 
     SPAN.placeholder {
