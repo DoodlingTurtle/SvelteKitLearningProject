@@ -1,8 +1,9 @@
 <script>
     import { page } from "$app/stores";
-    import { GET } from "$lib/modules/API";
+    import { GET, PATCH } from "$lib/modules/API";
     import { user_modules } from "./UserModules";
     import debug from "$lib/modules/Debug";
+    import { toast } from '$lib/modules/ToastMsg'
 
     //====================================================================================
     // Properties
@@ -54,7 +55,28 @@
     //====================================================================================
     // Event Handlers
     //====================================================================================
+    const onReassignModules = async () => {
 
+        PATCH(`/user/${uid}/modules`, { 'modules': assignedModules } )
+            .then((ret) => {
+                originalModules = [ ...assignedModules ]
+                modulesChanged = false;
+                toast(
+                    `changes saved`, 
+                    'var(--toast-green)', 
+                    2000
+                );
+            })
+            .catch((e) => {
+                if(e.status != 403) {
+                    toast(
+                        `Server error: ${e.data || e.message || 'see console'}`, 
+                        'var(--toast-red)', 
+                        5000
+                    );
+                }
+            })
+    }
 
 
 
@@ -115,7 +137,7 @@
 
                     {#if modulesChanged}
                     <div class="two_button_row">
-                        <button class="btn">save</button>
+                        <button class="btn" on:click={onReassignModules}>save</button>
                         <button class="btn" on:click={() => { assignedModules = [ ...originalModules ]; modulesChanged = false; }}>reset</button>
                     </div>
                     {/if}
