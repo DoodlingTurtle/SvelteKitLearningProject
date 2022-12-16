@@ -176,7 +176,7 @@ export function PUT(url, body, opts={}) {
 	return call("put", url, contentTypePreProcess(opts, body), debugbase.prefix(".PUT") ) 
 }
 export function PATCH(url, body, opts={}) { 
-	return call("PATCH", url, contentTypePreProcess(opts, body), debug.debugbase.prefix(".PATCH") )
+	return call("PATCH", url, contentTypePreProcess(opts, body), debugbase.prefix(".PATCH") )
 }
 
 export default { GET, POST, PUT, PATCH, DELETE, addResponseListener, removeResponseListener }
