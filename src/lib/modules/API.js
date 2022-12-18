@@ -153,6 +153,7 @@ function contentTypePreProcess(opts={}, body=null) {
 	switch(contentType) {
 		case 'application/json':
 			optOverride.body = JSON.stringify(body);			
+			optHeaders[contentTypeHeader] = 'application/json';
 			break;
 
 		default:
