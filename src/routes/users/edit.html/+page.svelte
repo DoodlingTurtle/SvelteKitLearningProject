@@ -57,7 +57,11 @@
     //====================================================================================
     const onReassignModules = async () => {
 
-        PATCH(`/user/${uid}/modules`, { 'modules': assignedModules } )
+        PATCH(
+            `/user/${uid}/modules`, 
+            { 'modules': assignedModules },
+            { headers: { "content-type": 'application/json' } ,expect: "json"}
+        )
             .then((ret) => {
                 originalModules = [ ...assignedModules ]
                 modulesChanged = false;
