@@ -48,7 +48,7 @@
 
     $: availableModules = (() => {
         let ret = {};
-        ($user_modules || []).forEach((e, i, a) => (ret[e.id] = e.id));
+        ($user_modules || []).forEach((e) => (ret[e.id] = e.id));
         return ret;
     })();
 
