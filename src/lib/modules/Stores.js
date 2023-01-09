@@ -4,6 +4,7 @@ export { cleanStore } from '$lib/modules/SvelteKitStaticStoreCreators'
 //=======================================================================================
 // Browser-Storage
 //=======================================================================================
+export let profileid    = createLocalStore("profileid", 0);
 export let username     = createLocalStore("username", "");
 export let loggedin     = createLocalStore("loggedin", false);
 export let user_modules = createLocalStore("user_modules", {core: false});

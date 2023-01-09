@@ -26,12 +26,14 @@
 </section>
 
 <script>
-	import {api_token, api_url, username, loggedin, loginPageErrorMessage, user_modules } from '$lib/modules/Stores';
+    import {api_token, api_url, username, loggedin, 
+        loginPageErrorMessage, user_modules ,
+        profileid
+    } from '../../../lib/modules/Stores';
     import { goto } from '$app/navigation';
-	import { fade } from 'svelte/transition';
-    import ToastMsg from '$lib/modules/ToastMsg';
-    import {htmlentities} from '$lib/modules/Utils';
-    import { POST } from '$lib/modules/API';
+    import ToastMsg from '../../../lib/modules/ToastMsg';
+    import {htmlentities} from '../../../lib/modules/Utils';
+    import { POST } from '../../../lib/modules/API';
 
     let user = "";
     let pass = "";
@@ -41,7 +43,7 @@
         try {
             let response = await POST(
                 '/login', 
-                (new URLSearchParams({user, pass})).toString(), 
+                {user, pass},
                 {
                     ignore404: true,
                     expect: 'json',
@@ -50,6 +52,7 @@
             );
 
             let jsonRes = response.data;
+            $profileid = parseInt(jsonRes['profileid']);
             $api_url = jsonRes['apiurl'];
             $api_token = jsonRes['token'];
             $username = jsonRes['displayname'];
