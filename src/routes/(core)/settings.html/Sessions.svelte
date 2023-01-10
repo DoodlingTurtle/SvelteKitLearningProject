@@ -1,3 +1,42 @@
+
+<script >
+    import { getContext } from "svelte";
+    import { flip } from 'svelte/animate';
+
+    import { GET, DELETE } from "$lib/modules/API";
+
+    import BtnDelete from "$lib/components/BtnDelete.svelte";
+    import FoldContainer from "$lib/components/FoldContainer.svelte";
+    import Loader from "$lib/components/Loader.svelte";
+
+    import { formatDateTime } from "$lib/modules/Utils";
+
+    /** @typedef ContextObj
+     * @property {boolean} sessionFold 
+     */
+
+     /** @type {ContextObj} */
+    let context = getContext("settingsfrm");
+
+    let sessions = [];
+    export const data ={};
+
+    let sessionsPromise = GET("/user_sessions", {expect: 'json'})
+        .then( data => {
+            sessions = data.data
+            return Promise.resolve();
+        });
+
+    /**
+     * @param {string} sessID
+     */
+    async function dropSession(sessID) {
+        await DELETE(`/user_sessons/${sessID}`);
+        sessions = sessions.filter((s) => s.id != sessID);
+    }
+
+</script>
+
 <FoldContainer open={context.sessionsFold} on:toggle={(ev) => {(context.sessionsFold = ev.detail); }} >
     <h2 slot="legend" class="btn {context.sessionsFold ? 'active' : ''}">Sessions:</h2>
     <fieldset slot="content">
@@ -32,45 +71,6 @@
         {/await}
     </fieldset>
 </FoldContainer>
-
-<script >
-    import { getContext } from "svelte";
-    import { flip } from 'svelte/animate';
-
-    import { GET, DELETE } from "$lib/modules/API";
-
-    import BtnDelete from "$lib/components/BtnDelete.svelte";
-    import FoldContainer from "$lib/components/FoldContainer.svelte";
-    import Loader from "$lib/components/Loader.svelte";
-
-    import { formatDateTime } from "$lib/modules/Utils";
-
-    /** @typedef ContextObj
-     * @property {boolean} sessionFold 
-     */
-
-     /** @type {ContextObj} */
-    let context = getContext("settingsfrm");
-
-    let sessions = [];
-    export const data ={};
-
-    let sessionsPromise = GET("/sessions", {expect: 'json'})
-        .then( data => {
-            sessions = data.data
-            return Promise.resolve();
-        });
-
-    /**
-     * @param {string} sessID
-     */
-    async function dropSession(sessID) {
-        await DELETE(`/session/${sessID}`);
-        sessions = sessions.filter((s) => s.id != sessID);
-    }
-
-</script>
-
 
 <style lang="scss">
     @import 'media.sass';

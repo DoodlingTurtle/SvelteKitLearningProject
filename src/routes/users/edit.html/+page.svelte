@@ -1,9 +1,9 @@
 <script>
     import { page } from "$app/stores";
-    import { GET, PATCH } from "$lib/modules/API";
-    import { user_modules } from "./UserModules";
-    import debug from "$lib/modules/Debug";
-    import { toast } from '$lib/modules/ToastMsg'
+    import { GET, PATCH } from "../../../lib/modules/API";
+    import { user_modules } from "../../../lib/modules/UserModules";
+    import debug from "../../../lib/modules/Debug";
+    import { toast } from '../../../lib/modules/ToastMsg'
 
     //====================================================================================
     // Properties
@@ -87,10 +87,10 @@
     //====================================================================================
     // Components
     //====================================================================================
-    import PageTitle from "$lib/components/PageTitle.svelte";
-    import Loader from "$lib/components/Loader.svelte";
-    import SwtichList from "$lib/components/SwtichList.svelte";
-    import FoldContainer from "$lib/components/FoldContainer.svelte";
+    import PageTitle from "../../../lib/components/PageTitle.svelte";
+    import Loader from "../../../lib/components/Loader.svelte";
+    import SwtichList from "../../../lib/components/SwtichList.svelte";
+    import FoldContainer from "../../../lib/components/FoldContainer.svelte";
     import EditableInput from "../../../lib/components/EditableInput.svelte";
 </script>
 

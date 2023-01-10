@@ -1,7 +1,7 @@
 import { browser } from "$app/environment";
 import {openDB, deleteDB } from 'idb'
 
-import DebugModule from '$lib/modules/Debug'
+import DebugModule from './Debug'
 
 const DBNAME = "app_storage";
 

@@ -1,7 +1,4 @@
 <script>
-    // @ts-nocheck
-    import { GET } from "$lib/modules/API";
-
     import PageTitle from '$lib/components/PageTitle.svelte';
     import Loader from "$lib/components/Loader.svelte";
 
@@ -10,50 +7,28 @@
     import Sessions from './Sessions.svelte';
     
     import { setContext } from 'svelte';
-    import { fade } from 'svelte/transition';
-    
-    //=========================================================================
-    // Fetch Data for the Form
-    //=========================================================================
-    let fetchPromise = GET("/account", { expect: "json" }).then( res => res.data );
 
     //=========================================================================
     // Create Context (shared with all components) 
     //=========================================================================
     let context = setContext("settingsfrm", {
         myAccountFold: true, 
-        pwConfirm: false,
-        pwConfirmOldPW: "",
-        pwConfirmCode: "",
-
-
         modulesFold: true, 
         sessionsFold: true, 
-        pass: "", 
-        passRep: "",
     })
 
-
 </script>
-
 
 <div class="page-settings">
 
     <PageTitle alternateContainer="#ApplicationTitleBar" scrollListener="#AppContainer">Your account</PageTitle>
-    
-    {#await fetchPromise}
-        <Loader />
-    {:then data}
 
-        <div class="frm">
-            <span style="grid-area: ma"><MyAccount  {data} /></span>
-            <span style="grid-area: mo"><Privileges {data} /></span>
-            <span style="grid-area: se"><Sessions   {data} /></span>
-        </div>
+    <div class="frm">
+        <span style="grid-area: ma"><MyAccount /></span>
+        <span style="grid-area: mo"><Privileges/></span>
+        <span style="grid-area: se"><Sessions  /></span>
+    </div>
 
-    {:catch error}
-        Error while loading, you may need to log out and in again
-    {/await}
 </div>
 
 <style lang="scss">

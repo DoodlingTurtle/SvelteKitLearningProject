@@ -1,9 +1,9 @@
 import { writable } from 'svelte/store';
 
-import { DatabaseStore, registerStore } from './database'
-import { GET } from './API';
-import DebugModule from './Debug';
-import { empty } from './Utils';
+import { DatabaseStore, registerStore } from './Database.js'
+import { GET } from './API.js';
+import DebugModule from './Debug.js';
+import { empty } from './Utils.js';
 
 const debug = DebugModule.prefix("UserModules");
 

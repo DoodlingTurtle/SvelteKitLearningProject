@@ -1,21 +1,36 @@
 
 <script>
     import { getContext } from "svelte";
-    import FoldContainer from "$lib/components/FoldContainer.svelte";
+    import FoldContainer from "../../../lib/components/FoldContainer.svelte";
     import { slide } from "svelte/transition";
 
-    import { POST, PATCH, DELETE } from '$lib/modules/API';
-    import { empty } from '$lib/modules/Utils';
-    import { toast } from '$lib/modules/ToastMsg';
-    
-    export let data = {}
+    import { GET, POST, PATCH, DELETE } from '../../../lib/modules/API.js';
+    import { profileid }  from '../../../lib/modules/Stores.js'
+    import { empty } from '../../../lib/modules/Utils.js';
+    import { toast } from '../../../lib/modules/ToastMsg.js';
 
     let context = getContext("settingsfrm");
 
     let sPasswordError = "";
     let sPasswordMessage = "";
 
-    $: context.pwConfirm = data.pwchange=="1"
+    let data = {
+        displayname: '',
+        users_id: {
+            login: '',
+            email: '',
+        }
+    }
+
+    GET("/user_profile", {expect: 'json'}, {
+        columns: {
+            displayname: true,
+            users_id: [ 'login', 'email', 'pwconfirm' ]
+        }, 
+        where: { users_id: $profileid }
+    }).then( res => {
+        data = res.data[0]
+    })
 
     $: sPasswordMessage = context.pwConfirm 
         ? "To finish the change, please enter the Code from the E-Mail we send you."
@@ -26,7 +41,6 @@
     $: if(bPasswordError) sPasswordMessage = sPasswordError;
 
     const onConfirm = () => {
-
         if(empty(context.pwConfirmOldPW)) {
             toast("please fill in the old password", 'var(--toast-red)', 4000)
             return;
@@ -47,7 +61,6 @@
                 toast("failed to confirm password change " + err.data, 'var(--toast-red)', 6000)
                 console.error(err);
             } )
-
     }
 
     const onCancel = () => {
@@ -90,7 +103,6 @@
                 context.passRep = "";
                 data.pwchange = "1";
             }).catch( err => toast(`password change request failed: ${err.data}`, 'var(--toast-red)', 5000) )
-
     }
 
 </script>
@@ -102,9 +114,10 @@
         <p class="mt-1 mb-3 mt-sm-1 mb-sm-3" style="grid-area: de"   >
             Here you can change anything in regards to your Account and the App
         </p>
-        <b class="                    "  style="grid-area: ll"  >Login:</b>          <span class="               " style="grid-area: lc">{data.login}</span>
-        <b class="mt-3 mt-xs-2 mt-sm-1"  style="grid-area: el"  >E-Mail:</b>         <span class="mt-xs-2 mt-sm-1" style="grid-area: ec">{data["email"]}</span>
-        <b class="mt-3 mt-xs-2 mt-sm-1"  style="grid-area: nl"  >Profile:</b>        <span class="mt-xs-2 mt-sm-1" style="grid-area: nc">{data["profilename"]}</span>
+        <b class="                    "  style="grid-area: ll"  >Login:</b>          <span class="               " style="grid-area: lc">{data.users_id.login}</span>
+        <b class="mt-3 mt-xs-2 mt-sm-1"  style="grid-area: el"  >E-Mail:</b>         <span class="mt-xs-2 mt-sm-1" style="grid-area: ec">{data.users_id.email}</span>
+        <b class="mt-3 mt-xs-2 mt-sm-1"  style="grid-area: nl"  >Profile:</b>        <span class="mt-xs-2 mt-sm-1" style="grid-area: nc">{data.displayname}</span>
+
         {#if bPasswordMessage}
             <span class="mt-4 mt-sm-2" style="grid-area: la">
                 <b transition:slide style:color={bPasswordError ? 'red' : 'green'} style="display: block" class="mb-4 mt-4">{sPasswordMessage}</b>

@@ -1,9 +1,9 @@
 <script>
     import {goto} from '$app/navigation';
-    import { cleanStore, loggedin } from '$lib/modules/Stores';
-    import DB from '$lib/modules/database'
+    import { cleanStore, loggedin } from '../modules/Stores';
+    import DB from '../modules/Database'
     import Modal from './Modal.svelte';
-    import {DELETE} from "$lib/modules/API";
+    import {DELETE} from "../modules/API";
 
     export let cssClass = "";
 

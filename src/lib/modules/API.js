@@ -64,7 +64,6 @@ function apacheURLParams(paramsObj, prefix='', output=null) {
 }
 
 async function call(method, url, opts, debugbase) {
-
     const debug = debugbase.prefix("("+url+")")
 
     const resType = opts.expect || "";
