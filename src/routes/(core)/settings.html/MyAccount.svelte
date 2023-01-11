@@ -1,109 +1,37 @@
-
 <script>
-    import { getContext } from "svelte";
+    import { getContext, onMount } from "svelte";
     import FoldContainer from "../../../lib/components/FoldContainer.svelte";
-    import { slide } from "svelte/transition";
+    import Loader from "../../../lib/components/Loader.svelte";
+    import PasswordChange from "./MyAccountPassword.svelte"
 
-    import { GET, POST, PATCH, DELETE } from '../../../lib/modules/API.js';
+    import { GET } from '../../../lib/modules/API.js';
     import { profileid }  from '../../../lib/modules/Stores.js'
-    import { empty } from '../../../lib/modules/Utils.js';
-    import { toast } from '../../../lib/modules/ToastMsg.js';
 
     let context = getContext("settingsfrm");
-
-    let sPasswordError = "";
-    let sPasswordMessage = "";
 
     let data = {
         displayname: '',
         users_id: {
             login: '',
             email: '',
+            pwconfirm: 0
         }
     }
 
-    GET("/user_profile", {expect: 'json'}, {
-        columns: {
-            displayname: true,
-            users_id: [ 'login', 'email', 'pwconfirm' ]
-        }, 
-        where: { users_id: $profileid }
-    }).then( res => {
-        data = res.data[0]
-    })
+    let loadPromise = Promise.resolve(data);
 
-    $: sPasswordMessage = context.pwConfirm 
-        ? "To finish the change, please enter the Code from the E-Mail we send you."
-        : "";
-
-    $: bPasswordError = sPasswordError.trim() != "";
-    $: bPasswordMessage = bPasswordError || sPasswordMessage.trim() != "";
-    $: if(bPasswordError) sPasswordMessage = sPasswordError;
-
-    const onConfirm = () => {
-        if(empty(context.pwConfirmOldPW)) {
-            toast("please fill in the old password", 'var(--toast-red)', 4000)
-            return;
-        }
-
-        if(empty(context.pwConfirmCode)) {
-            toast("please enter the confirm code", 'var(--toast-red)', 4000)
-            return;
-        }
-
-        PATCH("/passwordchange", {oldpw: context.pwConfirmOldPW, code: context.pwConfirmCode })
-            .then( res => {
-                data.pwchange=0;
-                context.pwConfirmOldPW="";
-                context.pwConfirmCode="";
-            } )
-            .catch( err => {
-                toast("failed to confirm password change " + err.data, 'var(--toast-red)', 6000)
-                console.error(err);
-            } )
-    }
-
-    const onCancel = () => {
-        DELETE("/passwordchange").then(res => {
-            switch(res.status) {
-                default: 
-                    console.warn("unexpected response status: ", res);
-                case 205:  
-                    context.pwConfirm = false;
-                    data.pwchange=0
-                    context.pwConfirmOldPW="";
-                    context.pwConfirmCode="";
-            }
+    onMount(() => {
+        console.log("Page on mount");
+        loadPromise = GET("/user_profile", {expect: 'json'}, {
+            columns: {
+                displayname: true,
+                users_id: [ 'login', 'email', 'pwconfirm' ]
+            }, 
+            where: { users_id: $profileid }
+        }).then( res => {
+            data = res.data[0]
         })
-        .catch( err => {
-            toast("failed to cancel password change " + err.data, 'var(--toast-red)', 6000)
-            console.error(err);
-        } )
-    }
-
-    const onclick = () => {
-        let p1 = context.pass;
-        let p2 = context.passRep;
-
-        sPasswordError = "";
-
-        if(p1.length != p1.trim().length) {
-            sPasswordError = "password cant have whitepaces at the start or end";
-            return;
-        }
-
-        if(p1 != p2) {
-            sPasswordError = "Password and its Repeat do not match";
-            return;
-        }
-
-        POST("/passwordchange", {'pass': p1}, {expect: 'json'})
-            .then(res => {
-                context.pass = "";
-                context.passRep = "";
-                data.pwchange = "1";
-            }).catch( err => toast(`password change request failed: ${err.data}`, 'var(--toast-red)', 5000) )
-    }
+    })
 
 </script>
     
@@ -114,36 +42,19 @@
         <p class="mt-1 mb-3 mt-sm-1 mb-sm-3" style="grid-area: de"   >
             Here you can change anything in regards to your Account and the App
         </p>
+    {#await loadPromise}
+        <Loader />
+    {:then $_2}
         <b class="                    "  style="grid-area: ll"  >Login:</b>          <span class="               " style="grid-area: lc">{data.users_id.login}</span>
         <b class="mt-3 mt-xs-2 mt-sm-1"  style="grid-area: el"  >E-Mail:</b>         <span class="mt-xs-2 mt-sm-1" style="grid-area: ec">{data.users_id.email}</span>
         <b class="mt-3 mt-xs-2 mt-sm-1"  style="grid-area: nl"  >Profile:</b>        <span class="mt-xs-2 mt-sm-1" style="grid-area: nc">{data.displayname}</span>
+    {:catch err}
+        {@const $_1 = console.error(err)}
+        <span style="color: gray">Failed to get your accunt data.</span>
+    {/await}
 
-        {#if bPasswordMessage}
-            <span class="mt-4 mt-sm-2" style="grid-area: la">
-                <b transition:slide style:color={bPasswordError ? 'red' : 'green'} style="display: block" class="mb-4 mt-4">{sPasswordMessage}</b>
-            </span>
-        {/if}
+    <PasswordChange pwconfirm={data.users_id.pwconfirm}/>
 
-        {#if context.pwConfirm} 
-            <b class="mt-2" style="grid-area: pl">Old Password:</b>
-            <span class="mt-sm-2" style="grid-area: pc"><input type="password" bind:value={context.pwConfirmOldPW}/></span>
-            <b class="mt-2" style="grid-area: rl">Conf. Code:</b>
-            <span class="mt-sm-2" style="grid-area: rc"><input type="text" bind:value={context.pwConfirmCode}/></span>
-
-            <span class="mt-2      mt-sm-1"  style="grid-area: cp">
-                <button class="btn" on:click={onConfirm} >confirm</button>
-                <button class="btn" on:click={onCancel} >cancel change</button>
-            </span>
-        {:else}
-            <b class="mt-4         mt-sm-2" style="grid-area: pl"
-                style:color={bPasswordError ? 'red' : ''} >Password:</b>       
-                <span class="mt-xs-4 mt-sm-2" style="grid-area: pc"><input type="password" bind:value={context.pass} /></span>
-            <b class="mt-2         mt-sm-1" style="grid-area: rl" 
-                style:color={bPasswordError ? 'red' : ''} >Password Repeat:</b>
-                <span class="mt-xs-2 mt-sm-1" style="grid-area: rc"><input type="password" bind:value={context.passRep} /></span>
-
-            <span class="mt-2      mt-sm-1" style="grid-area: cp" ><button class="btn" on:click={onclick} >change password</button></span>
-        {/if}
     </fieldset>
 </FoldContainer>
 
